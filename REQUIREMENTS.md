@@ -1,326 +1,215 @@
 ---
 title: "Đặc tả Yêu cầu Phần mềm (REQUIREMENTS.md) — Track B: Vườn Toán Lớp 3"
-document_id: "KTPMUD-2026-TRACKB-M1-REQUIREMENTS"
-version: "1.0.0"
-date: "2026-11-07"
-milestone: "M1 — Understand (Checkpoint 1)"
-track: "Track B — Brownfield Extension (ktpmud-bkt-vuontoan-starter)"
-feature: "Dạng bài mới: Ước lượng trước khi tính đúng (Estimate Before Exact Calculation)"
+document_id: "KTPMUD-2026-TRACKB-REQUIREMENTS"
+version: "2.1.0"
+date: "2026-11-09"
+track: "Track B — Vườn Toán Lớp 3 (hoang_mai_toan)"
+repository: "ktpmud-bkt-vuontoan-starter"
 ---
 
-# TÀI LIỆU ĐẶC TẢ YÊU CẦU (REQUIREMENTS.md)
-**Dự án:** Vườn Toán Lớp 3 — Mở rộng dạng bài *"Ước lượng trước khi tính đúng"* (Track B)  
-**Mốc bàn giao:** M1 — Understand (05–08/11/2026)
+# TÀI LIỆU ĐẶC TẢ YÊU CẦU PHẦN MỀM (REQUIREMENTS.md)
+**Chủ đề Track B:** Vườn Toán Lớp 3 — Thêm dạng luyện tập *"Ước lượng kết quả trước khi tính đúng"* trên các phép nhân/chia đã có.
 
 ---
 
-## 1. Giới thiệu & Bối cảnh hệ thống (System Context)
+## 1. Giới thiệu & Bối cảnh nghiệp vụ (Business Context)
 
-### 1.1. Hiện trạng hệ thống (Baseline)
-Hệ thống **Vườn Toán Lớp 3** hiện tại là một ứng dụng web phục vụ học sinh lớp 3 luyện tập và kiểm tra Toán theo chương trình Sách Giáo Khoa. Hệ thống sử dụng kiến trúc:
-- **Frontend:** HTML5, Tailwind CSS, Vanilla JavaScript (`public/*.html`, `public/assets/js/pages/*.js`).
-- **Backend:** Node.js + Express (`server/index.js`, `server/api.js`, `server/auth.js`).
-- **Cơ sở dữ liệu:** SQLite đồng bộ qua `better-sqlite3` (`server/db.js`, lưu tại `data/vuon-toan.db`, khởi tạo từ `data/seed.json`).
+### 1.1. Hiện trạng hệ thống (Baseline System)
+Ứng dụng web **Vườn Toán Lớp 3 — Trường Tiểu học Hoàng Mai** hiện cung cấp môi trường học tập, luyện tập và kiểm tra môn Toán lớp 3 (Chương trình GDPT 2018) với lộ trình 81 bài học (`data/seed.json`, `data/curriculum.json`). Trong đó, mạch kiến thức trọng tâm đang được triển khai luyện tập sâu là **các bảng nhân, bảng chia (6, 7, 8, 9) và phép nhân/chia số có hai chữ số với số có một chữ số** (từ `bai-9` đến `bai-15`, `bai-23`, `bai-26`).
 
-Hiện tại, bảng `questions` và cơ chế chấm điểm tại `POST /api/submissions` chỉ hỗ trợ **4 loại câu hỏi (`type`)** với cơ chế **so khớp chuỗi tuyệt đối** (`given === correct_answer`):
-1. `multiple-choice`: Trắc nghiệm chọn 1 đáp án đúng (`A`, `B`, `C`, `D`).
-2. `input`: Điền 1 số cố định vào ô trống (ví dụ: `"9"`).
-3. `compare`: Điền dấu so sánh (`">"`, `"<"`, `"="`).
-4. `paint`: Tô màu thẻ phép tính theo kết quả (`"green"`, `"yellow"`).
+Hệ thống hiện có chỉ hỗ trợ **4 loại câu hỏi (`type`)** với cơ chế chấm điểm **1 bước — so khớp chuỗi ký tự tuyệt đối** (`given === correct_answer`):
+- `multiple-choice`: Chọn 1 đáp án trắc nghiệm (`A`, `B`, `C`, `D`).
+- `input`: Điền kết quả số cố định (ví dụ: `"54 : 6 = ?"` $\rightarrow$ `"9"`).
+- `compare`: Điền dấu so sánh (`">"`, `"<"`, `"="`).
+- `paint`: Tô màu thẻ phép tính theo kết quả (`"green"`, `"yellow"`).
 
-### 1.2. Vấn đề cần giải quyết (Problem Statement)
-Trong chương trình Toán lớp 3, kỹ năng **"Ước lượng kết quả phép tính"** (thông qua làm tròn số đến hàng chục, hàng trăm) trước khi thực hiện tính chính xác giúp học sinh phát triển cảm nhận về số (number sense) và tự phát hiện sai sót khi tính toán.
+### 1.2. Nhu cầu mở rộng nghiệp vụ (Mục 8.2 Đề thi)
+Khi học sinh lớp 3 thực hiện các phép nhân và phép chia (đặc biệt là bảng nhân/chia 6, 7, 8, 9 hoặc nhân/chia số có hai chữ số với số có một chữ số), học sinh thường mắc lỗi tính nhầm hàng chục hoặc quên nhớ mà không tự nhận ra kết quả vô lý.
 
-Tuy nhiên, hệ thống hiện tại **chưa thể biểu diễn và chấm điểm** dạng bài này vì:
-1. Một câu hỏi *"Ước lượng trước khi tính đúng"* đòi hỏi học sinh thực hiện **2 bước trả lời** trên cùng một câu hỏi: (1) Nhập giá trị ước lượng và (2) Nhập kết quả tính đúng.
-2. Giá trị ước lượng có thể chấp nhận một **khoảng giá trị hợp lý `[min, max]`** (hoặc giá trị làm tròn chuẩn tắc) thay vì chỉ so sánh chuỗi cứng với một số duy nhất.
-3. Hệ thống cần phản hồi (feedback) tách biệt rõ ràng giữa việc học sinh *"ước lượng hợp lý"* hay chưa và *"kết quả tính chính xác"* đúng hay sai (**B-06**).
-
-```mermaid
-flowchart LR
-    subgraph Hiện_Tại ["Hệ thống hiện có (4 type cũ)"]
-        Q1["Câu hỏi đơn (1 bước)"] --> C1["So khớp chuỗi: given === correct_answer"]
-        C1 --> R1["Chỉ trả về: Đúng / Sai"]
-    end
-
-    subgraph Mở_Rộng_Track_B ["Tính năng mở rộng Track B (type = 'estimate')"]
-        Q2["Câu hỏi 2 bước:<br/>1. Ước lượng<br/>2. Tính đúng"] --> C2["Server chấm tất định:<br/>• min <= estimate <= max<br/>• exact === target"]
-        C2 --> R2["Feedback 4 trạng thái:<br/>Phân biệt rõ 'Ước lượng' vs 'Tính đúng'"]
-    end
-
-    Hiện_Tại -. "Giữ nguyên 100%<br/>(Tương thích ngược)" .-> Mở_Rộng_Track_B
-```
+Do đó, hệ thống cần bổ sung dạng luyện tập mới: **"Ước lượng kết quả trước khi tính đúng" (`type = 'estimate'`)** ngay trên các phép nhân/chia đã có:
+1. **Bước 1 (Ước lượng trước):** Học sinh phải đưa ra một số ước lượng (hoặc giá trị nằm trong khoảng hợp lý `[min, max]`) cho tích/thương **trước khi** thực hiện bước tính chính xác.
+2. **Bước 2 (Tính đúng sau):** Học sinh nhập kết quả tính chính xác (`exact`) của phép nhân/chia đó.
+3. **Phản hồi sư phạm kép (`B-06`):** Sau khi nộp bài, hệ thống chấm điểm tất định trên Server và trả về nhận xét phân biệt rõ ràng giữa việc học sinh *"ước lượng hợp lý"* hay chưa và *"kết quả chính xác"* đúng hay sai.
 
 ---
 
 ## 2. Phạm vi dự án (Project Scope)
 
 ### 2.1. Trong phạm vi (In-Scope)
-- **Tích hợp luồng học (B-01):** Đưa dạng bài mới (`type = 'estimate'`) vào trực tiếp luồng học tập hiện có của học sinh (truy cập từ Trang chủ / Mục lục SGK `muc-luc.html` $\rightarrow$ Trang làm bài `lesson.html` và/hoặc Phiếu luyện tập `exercise.html`).
-- **Dữ liệu câu hỏi mẫu (B-02):** Xây dựng tối thiểu **12 câu hỏi synthetic** (hư cấu, chuẩn chương trình Toán lớp 3) trong `data/seed.json`, tự động nạp vào SQLite khi khởi tạo.
-- **Logic toán học & Chấm điểm phía Server (B-03, B-04, B-05, B-06):**
-  - Định nghĩa quy tắc tạo khoảng ước lượng `[min, max]` và đáp án đúng `exact` hoàn toàn tất định (deterministic).
-  - Đảm bảo API `GET /api/question-sets/:setId/questions` ẩn toàn bộ đáp án (`correct_answer`, `min`, `max`, `exact`) trước khi nộp bài.
-  - Chấm điểm trên Server tại `POST /api/submissions`, lưu kết quả vào bảng `attempts`, `progress`, cộng sao vào `users` và trả về phản hồi phân biệt rõ bước *"Ước lượng"* với bước *"Tính đúng"*.
-- **Trải nghiệm người dùng & Khả năng tiếp cận (B-12):** Hỗ trợ điều hướng và nộp bài hoàn toàn bằng bàn phím (`Tab`, `Shift+Tab`, `Enter`), hiển thị thông báo lỗi tiếng Việt thân thiện cho học sinh lớp 3.
-- **Kiểm thử tự động & CI (B-08, B-09, B-10):** Thiết lập lệnh `npm test` (chạy từ clean checkout) bao phủ các ca kiểm thử `normal`, `boundary`, `invalid input`, `scoring/regression` và cấu hình GitHub Actions CI chạy `npm ci && npm test`.
+1. **Tích hợp vào luồng học hiện có (`B-01`):** Gắn dạng bài *"Ước lượng kết quả trước khi tính đúng"* trực tiếp vào các bài học nhân/chia sẵn có trên hệ thống (truy cập từ Trang chủ / Mục lục SGK `muc-luc.html` $\rightarrow$ `lesson.html` và Phiếu luyện tập `exercise.html`), tuyệt đối không tạo trang demo rời.
+2. **Ngân hàng 12+ câu hỏi synthetic tái lập được (`B-02`):** Bổ sung tối thiểu **12 câu hỏi mẫu** thuộc chủ đề phép nhân và phép chia lớp 3 vào `data/seed.json`.
+3. **Quy tắc toán học tất định & Chấm điểm Server-side (`B-03`, `B-04`, `B-05`, `B-06`):**
+   - Định nghĩa công thức xác định khoảng ước lượng hợp lý `[min, max]` và đáp số `exact` hoàn toàn bằng thuật toán tất định (không dùng LLM).
+   - Ẩn toàn bộ đáp án đúng và khoảng ước lượng khỏi phản hồi của API lấy đề bài (`GET /api/question-sets/:setId/questions`).
+   - Chấm điểm, lưu lịch sử (`attempts`), cập nhật tiến độ (`progress`), cộng sao thưởng (`users.total_stars`) bền vững qua các lần tải lại trang (`F5`).
+4. **Trải nghiệm bàn phím & Khả năng tiếp cận (`B-12`):** Cho phép học sinh hoàn thành toàn bộ luồng nhập 2 bước và nộp bài bằng bàn phím (`Tab`, `Shift+Tab`, `Enter`), kèm thông báo lỗi tiếng Việt dễ hiểu khi nhập dữ liệu không hợp lệ.
 
-### 2.2. Ngoài phạm vi & Ràng buộc bất biến (Out-of-Scope — B-07, B-11)
+### 2.2. Ngoài phạm vi & Ràng buộc bất biến (Out-of-Scope — Mục 8.4 & B-07, B-11)
+
 > [!CAUTION]
-> Nhóm cam kết **TUYỆT ĐỐI KHÔNG SỬA ĐỔI** các thành phần sau theo đúng yêu cầu **B-07** và **B-11**:
-> 1. Toàn bộ file `server/auth.js` (cơ chế tạo/kiểm tra token, session/cookie, bcrypt).
-> 2. Các route xác thực và quản trị trong `server/api.js`: `/api/auth/*`, `/api/teacher/*`, `/api/admin/*`.
-> 3. Danh sách và mật khẩu các tài khoản mẫu trong `data/seed.json` (`hocsinh01`..`hocsinh99`, `giaovien01`).
-> 4. Cấu hình đóng gói và triển khai hệ thống (`Dockerfile`, `.dockerignore`, `DEPLOY.md`).
-> 5. Hành vi và dữ liệu của 4 loại câu hỏi cũ (`multiple-choice`, `input`, `compare`, `paint`).
-> 6. Không đưa bất kỳ thông tin định danh cá nhân thật (PII) hay khóa bí mật (API key, secret) vào mã nguồn.
+> Tuân thủ nghiêm ngặt **Mục 8.4** và tiêu chí **B-07, B-11** của đề thi, các hạng mục sau nằm **NGOÀI PHẠM VI** và **CẤM THAY ĐỔI**:
+> 1. **Không thêm chương trình Toán hoặc nội dung SGK mới:** Không tự tạo thêm bài học ngoài 81 bài SGK đã có trong `data/seed.json` và `data/curriculum.json`; chỉ xây dựng câu hỏi ước lượng dựa trên các bài phép nhân/chia sẵn có.
+> 2. **Không thay đổi Authentication / Authorization (`B-07`):** Không sửa `server/auth.js`, cơ chế session/cookie/Bearer token, không sửa các route `/api/auth/*`, `/api/teacher/*`, `/api/admin/*`.
+> 3. **Không sửa tài khoản mẫu & cấu hình Deployment (`B-07`):** Giữ nguyên các tài khoản `hocsinh01`..`hocsinh99`, `giaovien01` và các file `Dockerfile`, `.dockerignore`, `DEPLOY.md`.
+> 4. **Không kết nối ứng dụng thật / production & Không dùng dữ liệu cá nhân thật (`B-11`):** Chỉ sử dụng SQLite cục bộ và các tài khoản/nhân vật synthetic hư cấu; không lưu PII hay secret trong mã nguồn.
+> 5. **Không dùng LLM để sinh đáp án hoặc chấm điểm lúc chạy (runtime):** Mọi phép kiểm tra đúng/sai đều là biểu thức toán học tất định trong code.
+> 6. **Không bắt buộc deploy public & Không thay đổi 4 `type` câu hỏi cũ:** Giữ nguyên hành vi của `multiple-choice`, `input`, `compare`, `paint`, các mini-game và bảng xếp hạng.
 
 ---
 
-## 3. Quy tắc Toán học Tất định: Giải thích chi tiết `min`, `max` và `exact` (B-03, B-06)
+## 3. Quy tắc Nghiệp vụ Toán học Tất định & Chấm điểm: `min`, `max` và `exact` (B-03, B-06)
 
-Để việc tạo câu hỏi và chấm điểm **không phụ thuộc vào cảm tính** và **không có yếu tố ngẫu nhiên**, nhóm định nghĩa mô hình toán học tất định dựa trên quy tắc làm tròn số Lớp 3 (Chương trình GDPT 2018).
+### 3.1. Mô hình câu hỏi 2 bước & Định dạng Mã hóa Đáp án Chuẩn hóa Duy nhất
+Mỗi câu hỏi `type = 'estimate'` đưa ra một phép nhân $A \times B$ hoặc phép chia $A : B$ thuộc chương trình lớp 3. Học sinh thực hiện tuần tự **2 bước**:
+- **Bước 1 — Ước lượng (`estimate` = $u$):** Học sinh nhẩm nhanh xem tích hoặc thương khoảng bao nhiêu (dựa trên quy tắc làm tròn đến hàng chục) và nhập số nguyên $u$ **trước khi** tính chi tiết.
+- **Bước 2 — Tính đúng (`exact` = $v$):** Học sinh tính chính xác kết quả của phép nhân/chia và nhập số nguyên $v$.
 
-### 3.1. Các khái niệm cốt lõi trong 1 câu hỏi Ước lượng
+> [!IMPORTANT]
+> **Định dạng Mã hóa Đáp án Chuẩn hóa (Single Source of Truth):**
+> Trong cơ sở dữ liệu (`data/seed.json` và bảng `questions`), cột `correct_answer` lưu trữ **DUY NHẤT một chuỗi JSON chuẩn hóa** gồm 4 trường số nguyên tất định:
+> ```json
+> {
+>   "min": 110,
+>   "max": 120,
+>   "canonical": 120,
+>   "exact": 114
+> }
+> ```
+> - `min` (Integer): Cận dưới của khoảng ước lượng hợp lý ($min \le exact \le max$).
+> - `max` (Integer): Cận trên của khoảng ước lượng hợp lý.
+> - `canonical` (Integer): Giá trị ước lượng chuẩn sư phạm (kết quả sau khi làm tròn đến hàng chục).
+> - `exact` (Integer): Đáp số tính toán chính xác tuyệt đối của phép tính.
+>
+> *(Không sử dụng chuỗi phân cách dạng cũ như "75-85|81" hay các tên biến khác nhau như min_estimate, exact_answer).*
 
-Mỗi câu hỏi dạng `"estimate"` yêu cầu học sinh giải một biểu thức số học $A \oplus B$ (với phép toán $\oplus \in \{+, -, \times, :\}$) qua **2 bước**:
-1. **Bước 1 — Ước lượng (`estimate`):** Học sinh làm tròn các số hạng đến hàng chục (hoặc hàng trăm) rồi nhẩm nhanh kết quả. Học sinh nhập vào số nguyên $u$.
-2. **Bước 2 — Tính đúng (`exact`):** Học sinh thực hiện phép tính chi tiết để tìm kết quả đúng tuyệt đối. Học sinh nhập vào số nguyên $v$.
+### 3.2. Công thức xác định tất định bộ tham số `(min, max, canonical, exact)`
 
-Trên Server, mỗi câu hỏi được gắn với 3 tham số số nguyên cố định $(min, max, exact)$ thỏa mãn $min \le max$:
-- **`exact` (Kết quả chính xác):** Là giá trị đúng tuyệt đối của phép tính $A \oplus B$.
-- **`canonical` (Giá trị ước lượng chuẩn tắc):** Là kết quả thu được khi làm tròn từng số hạng theo quy tắc chuẩn SGK (chữ số hàng làm tròn $< 5$ làm tròn xuống, $\ge 5$ làm tròn lên) rồi thực hiện phép tính:
-  $$\text{round}_{10}(n) = \left\lfloor \frac{n + 5}{10} \right\rfloor \times 10, \quad \text{round}_{100}(n) = \left\lfloor \frac{n + 50}{100} \right\rfloor \times 100$$
-- **`min` (Cận dưới hợp lý) & `max` (Cận trên hợp lý):** Là biên dưới và biên trên của **khoảng ước lượng hợp lý `[min, max]`** (bao gồm cả 2 đầu mút `min` và `max`).
+Mỗi câu hỏi trong cơ sở dữ liệu được xác định bằng một công thức toán học tất định duy nhất, không dùng hàm ngẫu nhiên hay từ "hoặc":
 
-### 3.2. Tại sao cần có khoảng `[min, max]` và công thức xác định `min`, `max` như thế nào?
+1. **Hàm làm tròn chuẩn đến hàng chục ($\text{round}_{10}$):**
+   $$\text{round}_{10}(n) = \left\lfloor \frac{n + 5}{10} \right\rfloor \times 10$$
+   *(Chữ số hàng đơn vị từ $0..4$ làm tròn xuống chục dưới; từ $5..9$ làm tròn lên chục trên).*
 
-Trong thực tế giảng dạy Toán lớp 3, khi ước lượng một phép tính như $38 + 43$:
-- **Cách 1 (Làm tròn chuẩn đến hàng chục):** $38 \approx 40$, $43 \approx 40 \Rightarrow 40 + 40 = \mathbf{80}$ (`canonical = 80`).
-- **Cách 2 (Làm tròn rồi bù trừ nhanh / Ước lượng cận):** Học sinh thấy $38$ gần $40$, $43$ hơn $40$ một chút nên ước lượng trong khoảng từ **`75` đến `85`** (dung sai $\pm 5$ đơn vị ứng với nửa bậc làm tròn hàng chục $\Delta = \frac{10}{2} = 5$).
-- Ngược lại, nếu đề bài yêu cầu rõ **"Làm tròn mỗi số đến hàng chục rồi ước lượng tổng"**, thì khoảng chấp nhận có thể thu hẹp hoặc mở rộng tùy theo bậc làm tròn $k$ ($k = 10$ cho hàng chục, $k = 100$ cho hàng trăm).
+2. **Ba loại bài toán Ước lượng Nhân / Chia trong bộ đề:**
 
-Để đảm bảo **Tính tất định 100% (B-03)**, quy tắc xác định `min` và `max` cho các câu hỏi trong hệ thống được khóa chặt bằng công thức sau:
-
-| Nhóm bài toán Lớp 3 | Bậc làm tròn ($k$) | Công thức tính Ước lượng chuẩn ($E_{\text{std}}$) | Dung sai cho phép ($\delta$) | Khoảng hợp lý `[min, max]` | Ví dụ minh họa |
-| :--- | :---: | :---: | :---: | :---: | :--- |
-| **Nhóm 1:** Cộng/Trừ số có 2 chữ số (làm tròn hàng chục) | $k = 10$ | $E_{\text{std}} = \text{round}_{10}(A) \pm \text{round}_{10}(B)$ | $\delta = 5$ ($\frac{k}{2}$) | $[E_{\text{std}} - 5,\; E_{\text{std}} + 5]$ | $38 + 43 = 81$<br/>$E_{\text{std}} = 40 + 40 = 80$<br/>`min = 75`, `max = 85`, `exact = 81` |
-| **Nhóm 2:** Cộng/Trừ số có 3 chữ số (làm tròn hàng trăm) | $k = 100$ | $E_{\text{std}} = \text{round}_{100}(A) \pm \text{round}_{100}(B)$ | $\delta = 50$ ($\frac{k}{2}$) | $[E_{\text{std}} - 50,\; E_{\text{std}} + 50]$ | $215 + 389 = 604$<br/>$E_{\text{std}} = 200 + 400 = 600$<br/>`min = 550`, `max = 650`, `exact = 604` |
-| **Nhóm 3:** Nhân/Chia số có 2 chữ số với số có 1 chữ số | $k = 10$ | $E_{\text{std}} = \text{round}_{10}(A) \times B$ | $\delta = 5 \times B$ (hoặc cận dưới/trên hàng chục của $A$) | $[\lfloor A \rfloor_{10} \times B,\; \lceil A \rceil_{10} \times B]$ | $29 \times 3 = 87$<br/>Cận: $20 \times 3 = 60$ đến $30 \times 3 = 90$<br/>(Làm tròn chục: $E_{\text{std}} = 90$, `min = 80`, `max = 95`) |
-
-### 3.3. Biểu đồ trực quan về khoảng `[min, max]` và các điểm biên (Boundary)
-
-Giả sử câu hỏi: **"Ước lượng rồi tính: $38 + 43 = ?$"** với bộ tham số trên Server là:
-- `min = 75`
-- `max = 85`
-- `canonical = 80` (40 + 40)
-- `exact = 81`
-
-```mermaid
-flowchart TD
-    subgraph Trục_Số_Ước_Lượng ["TRỤC SỐ KIỂM TRA BƯỚC 1: ƯỚC LƯỢNG (min = 75, max = 85)"]
-        direction LR
-        B_Left["... 73, 74<br/>(min - 1 = 74)<br/>❌ SAI (Nhỏ hơn min)"]
-        B_Min["75<br/>(Biên dưới min)<br/>✅ ĐÚNG"]
-        B_Mid["76 ... 80 (Chuẩn) ... 84<br/>(Trong khoảng)<br/>✅ ĐÚNG"]
-        B_Max["85<br/>(Biên trên max)<br/>✅ ĐÚNG"]
-        B_Right["86, 87 ...<br/>(max + 1 = 86)<br/>❌ SAI (Lớn hơn max)"]
-
-        B_Left --- B_Min --- B_Mid --- B_Max --- B_Right
-    end
-
-    style B_Left fill:#fee2e2,stroke:#ef4444,color:#991b1b
-    style B_Min fill:#dcfce7,stroke:#22c55e,color:#166534
-    style B_Mid fill:#dcfce7,stroke:#22c55e,color:#166534
-    style B_Max fill:#dcfce7,stroke:#22c55e,color:#166534
-    style B_Right fill:#fee2e2,stroke:#ef4444,color:#991b1b
-```
-
-**Công thức kiểm tra tất định trên Server:**
-1. Kiểm tra định dạng đầu vào: Giá trị học sinh nhập cho từng ô phải là chuỗi biểu diễn một **số nguyên hợp lệ** (khớp biểu thức chính quy `/^-?\d+$/` sau khi `.trim()`, không rỗng, không chứa chữ cái hay `NaN`, và $\ge 0$).
-2. Gọi $u = \text{Number}(givenEstimate)$ và $v = \text{Number}(givenExact)$:
-   - **Điều kiện Ước lượng hợp lý (`estimateOk`):**
-     $$\text{estimateOk} \iff (\text{Number.isInteger}(u)) \land (min \le u \le max)$$
-   - **Điều kiện Kết quả chính xác (`exactOk`):**
-     $$\text{exactOk} \iff (\text{Number.isInteger}(v)) \land (v === exact)$$
-   - **Điều kiện Câu hỏi hoàn thành đúng (`correct`):**
-     $$\text{correct} \iff \text{estimateOk} \land \text{exactOk}$$
-
-### 3.4. Ma trận 4 trạng thái chấm điểm & Phản hồi chi tiết (B-06)
-
-Để đáp ứng yêu cầu **B-06** (*"Có feedback phân biệt 'ước lượng hợp lý' với 'kết quả chính xác'"*), Server trả về trạng thái riêng cho từng bước:
-
-```mermaid
-flowchart TD
-    Start["Học sinh nộp:<br/>(estimate = u, exact = v)"] --> Validate{"Đầu vào là số nguyên<br/>hợp lệ?"}
-    Validate -- "Không (rỗng, chữ, ký tự lạ)" --> Err["estimateOk = false<br/>exactOk = false<br/>Feedback: 'Em cần nhập số tự nhiên hợp lệ vào cả 2 ô nhé!'"]
-    Validate -- "Có" --> CheckEst{"min <= u <= max ?"}
-    
-    CheckEst -- "Đúng (estimateOk = true)" --> CheckEx1{"v === exact ?"}
-    CheckEst -- "Sai (estimateOk = false)" --> CheckEx2{"v === exact ?"}
-
-    CheckEx1 -- "Đúng (exactOk = true)" --> S1["🌟 Trạng thái 1: ĐÚNG CẢ HAI (100% điểm)<br/>Feedback: 'Tuyệt vời! Em ước lượng hợp lý và tính đúng kết quả chính xác!'"]
-    CheckEx1 -- "Sai (exactOk = false)" --> S2["💡 Trạng thái 2: ƯỚC LƯỢNG ĐÚNG, TÍNH CHÍNH XÁC SAI<br/>Feedback: 'Em ước lượng khoảng gần đúng rất tốt! Nhưng kết quả tính chính xác còn nhầm, em đặt tính lại nhé.'"]
-
-    CheckEx2 -- "Đúng (exactOk = true)" --> S3["🔍 Trạng thái 3: ƯỚC LƯỢNG CHƯA HỢP LÝ, TÍNH CHÍNH XÁC ĐÚNG<br/>Feedback: 'Em tính ra kết quả chính xác đúng rồi! Tuy nhiên bước ước lượng ban đầu còn lệch xa khoảng hợp lý.'"]
-    CheckEx2 -- "Sai (exactOk = false)" --> S4["🌱 Trạng thái 4: CHƯA ĐÚNG CẢ HAI<br/>Feedback: 'Cả số ước lượng và kết quả tính đúng đều chưa chính xác. Em thử làm tròn các số rồi tính lại nhé!'"]
-
-    style S1 fill:#dcfce7,stroke:#16a34a,color:#14532d
-    style S2 fill:#fef9c3,stroke:#ca8a04,color:#713f12
-    style S3 fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
-    style S4 fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
-```
+| Loại bài toán (Trên các bài nhân/chia đã có) | Công thức Kết quả đúng (`exact`) | Công thức Ước lượng chuẩn (`canonical`) | Công thức Khoảng hợp lý `[min, max]` duy nhất | Ví dụ minh họa cụ thể |
+| :--- | :---: | :---: | :---: | :--- |
+| **Loại 1: Ước lượng tích trong Bảng nhân 6, 7, 8, 9**<br/>*(Bài 9, 11, 13, 14: $a \times b$)* | $P = a \times b$ | $E_{\text{std}} = \text{round}_{10}(P)$ | Kẹp giữa hai mốc tròn chục liên tiếp chứa $P$:<br/>• $min = \lfloor P / 10 \rfloor \times 10$<br/>• $max = \lceil P / 10 \rceil \times 10$ | **$6 \times 7 = ?$**<br/>• `exact` = $42$<br/>• `canonical` = $\text{round}_{10}(42) = 40$<br/>• `[min, max]` = **`[40, 50]`** |
+| **Loại 2: Nhân số có 2 chữ số với số có 1 chữ số**<br/>*(Làm tròn thừa số đến hàng chục — Bài 23: $A \times b$)* | $P = A \times b$ | $E_{\text{std}} = \text{round}_{10}(A) \times b$ | Bao phủ từ mốc chục của $P$ đến tích làm tròn $E_{\text{std}}$:<br/>• $min = \min(\lfloor P/10 \rfloor \times 10,\; E_{\text{std}})$<br/>• $max = \max(\lceil P/10 \rceil \times 10,\; E_{\text{std}})$ | **$19 \times 6 = ?$**<br/>• Làm tròn $19 \approx 20 \Rightarrow E_{\text{std}} = 20 \times 6 = 120$<br/>• `exact` = $114$<br/>• `[min, max]` = **`[110, 120]`** |
+| **Loại 3: Ước lượng thương trong Phép chia cho 6, 7, 8, 9**<br/>*(Bài 10, 12, 13, 14, 26: $A : b$)* | $Q = A : b$ | $E_{\text{std}} = \text{round}\left(\frac{\text{round}_{10}(A)}{b}\right)$ | Khoảng thương lân cận với dung sai cố định $\pm 2$ đơn vị:<br/>• $min = \max(1,\; Q - 2)$<br/>• $max = Q + 2$ | **$78 : 6 = ?$**<br/>• `exact` = $13$<br/>• Làm tròn $78 \approx 80 \Rightarrow E_{\text{std}} = 13$<br/>• `[min, max]` = **`[11, 15]`** |
 
 ---
 
-## 4. Đặc tả Use Cases & Luồng tương tác (Use Cases & User Flows)
+### 3.3. Cơ chế Ép thứ tự "Ước lượng trước" & Xử lý Câu hỏi Bảo vệ
 
-### 4.1. Sơ đồ trình tự tổng thể (Sequence Diagram)
-
-```mermaid
-sequenceDiagram
-    actor HS as Học sinh (Trình duyệt)
-    participant UI as Giao diện (muc-luc.html / lesson.html / exercise.html)
-    participant API as Backend Express (server/api.js)
-    participant DB as SQLite (server/db.js)
-
-    HS->>UI: 1. Chọn bài học "Ước lượng kết quả phép tính" từ Mục lục / Trang chủ (B-01)
-    UI->>API: 2. GET /api/question-sets/:setId/questions
-    API->>DB: 3. SELECT id, type, prompt, options_json, points, category FROM questions
-    Note right of API: Bảo mật B-04: KHÔNG lấy cột correct_answer,<br/>loại bỏ mọi thông tin đáp án trước khi trả JSON
-    API-->>UI: 4. Trả danh sách câu hỏi (không có đáp án)
-    UI-->>HS: 5. Hiển thị câu hỏi với 2 ô nhập: [Ước lượng] và [Tính đúng]
-
-    HS->>UI: 6. Dùng bàn phím (Tab, phím số, Enter) điền 2 ô và bấm Nộp bài (B-12)
-    UI->>UI: 7. Kiểm tra sơ bộ (nếu bỏ trống/nhập chữ -> hiện cảnh báo thân thiện)
-    UI->>API: 8. POST /api/submissions { setId, answers: { "est-1": { estimate: "80", exact: "81" } } }
-    API->>DB: 9. Lấy correct_answer gốc từ bảng questions
-    API->>API: 10. Chấm tất định: kiểm tra estimateOk (min<=u<=max) & exactOk (v===exact) (B-03)
-    API->>DB: 11. Transaction: Lưu attempts, cập nhật progress, cộng sao vào users (B-05)
-    API-->>UI: 12. Trả về { scorePercent, starsEarned, detail: [{ estimateOk, exactOk, feedback, ... }] } (B-06)
-    UI-->>HS: 13. Hiển thị tổng điểm, số sao và nhãn nhận xét riêng cho từng bước
-
-    HS->>UI: 14. Tải lại trang (F5 / Refresh)
-    UI->>API: 15. GET /api/me/progress (hoặc /api/lessons)
-    API->>DB: 16. Đọc best_score, completed, total_stars đã lưu
-    API-->>UI: 17. Giữ nguyên trạng thái điểm và sao (B-05)
-```
-
-### 4.2. Chi tiết các Use Cases
-
-#### UC-01: Truy cập dạng bài "Ước lượng trước khi tính đúng" từ luồng học chính (`B-01`)
-- **Tác nhân:** Học sinh đã đăng nhập (`hocsinh01`..`hocsinh99`).
-- **Điều kiện tiên quyết:** Học sinh đang ở Trang chủ (`index.html`), Mục lục SGK (`muc-luc.html`), hoặc Luyện tập (`exercise.html`).
-- **Luồng chính:**
-  1. Trên danh sách bài học, học sinh thấy bài học/phiếu bài tập về **"Ước lượng kết quả phép tính"** nằm trong lộ trình học chính thức.
-  2. Học sinh nhấn vào bài học để mở giao diện làm bài (`lesson.html?lesson=...&set=...` hoặc ngay trên `exercise.html`).
-  3. Hệ thống hiển thị danh sách các câu hỏi ước lượng mà không cần truy cập qua đường dẫn ẩn hay trang demo tách rời.
-
-#### UC-02: Làm bài với giao diện 2 bước hỗ trợ bàn phím (`B-12`)
-- **Tác nhân:** Học sinh.
-- **Luồng chính:**
-  1. Với mỗi câu hỏi `type = 'estimate'`, giao diện hiển thị rõ đề bài (ví dụ: *"Làm tròn các số đến hàng chục để ước lượng, sau đó tính kết quả chính xác: 38 + 43"*).
-  2. Giao diện cung cấp **2 ô nhập liệu có nhãn (`<label>`) rõ ràng**:
-     - Ô 1: **"Bước 1: Ước lượng khoảng..."**
-     - Ô 2: **"Bước 2: Kết quả tính đúng..."**
-  3. Học sinh dùng phím `Tab` để chuyển từ Ô 1 sang Ô 2 và sang câu tiếp theo, dùng phím `Enter` để kích hoạt nút nộp bài.
-- **Luồng ngoại lệ (Lỗi nhập liệu):**
-  - Nếu học sinh nhập ký tự không phải số (ví dụ `"abc"`, `"80a"`) hoặc bỏ trống khi bấm nộp, giao diện đánh dấu viền cảnh báo tại ô đó và hiện thông báo tiếng Việt dễ hiểu (ví dụ: *"Em ơi, ô Ước lượng của câu 1 cần điền một con số nhé!"*).
-
-#### UC-03: Chấm điểm trên Server và Nhận phản hồi kép (`B-03`, `B-04`, `B-05`, `B-06`)
-- **Tác nhân:** Học sinh, Hệ thống Backend.
-- **Luồng chính:**
-  1. Học sinh bấm **"Nộp bài"**.
-  2. Client gửi dữ liệu câu trả lời lên `POST /api/submissions`.
-  3. Server giải mã cấu hình đáp án `(min, max, exact)` trong DB, chấm độc lập `estimateOk` và `exactOk`.
-  4. Server ghi nhận lượt làm bài vào bảng `attempts`, cập nhật điểm cao nhất vào `progress` (đánh dấu `completed = 1` nếu đạt $\ge 50\%$) và cộng sao thưởng vượt kỷ lục vào bảng `users`.
-  5. Giao diện nhận kết quả và hiển thị ngay dưới từng câu hỏi **2 huy hiệu (badges)**:
-     - Huy hiệu 1: `Ước lượng hợp lý ✅` hoặc `Ước lượng chưa sát ❌ (Khoảng hợp lý: min – max)`.
-     - Huy hiệu 2: `Tính đúng chính xác ✅` hoặc `Tính chính xác chưa đúng ❌ (Đáp số đúng: exact)`.
+1. **Cơ chế Ép thứ tự tại Giao diện (UI-Enforced Sequence):**
+   - Học sinh khi mở bài tập bắt buộc thực hiện **Bước 1 trước**: Tiêu điểm (focus) nằm tại Ô 1 (Ước lượng).
+   - Ô 2 (Tính đúng) bị tạm khóa (`disabled`). Chỉ khi học sinh nhập một số tự nhiên hợp lệ vào Ô 1 và bấm `Tab` / `Enter` (hoặc rời ô), Ô 2 mới được mở khóa để nhập kết quả tính chính xác.
+   - Khi nộp bài, Client đóng gói toàn bộ cặp câu trả lời `{ estimate: u, exact: v }` gửi lên `POST /api/submissions` trong một lượt duy nhất.
+2. **Xử lý tình huống học sinh nhập kết quả chính xác vào ô ước lượng ($u === exact$):**
+   - *Về mặt điểm số:* Do $exact$ luôn nằm trong khoảng hợp lý $[min, max]$, hệ thống công nhận `estimateOk = true` (không phạt điểm học sinh tính nhẩm giỏi).
+   - *Về mặt phản hồi sư phạm:* Nếu $u === exact$ nhưng $u \ne canonical$, hệ thống bổ sung ghi chú: *"Em đã tính ra luôn kết quả chính xác! Tuy nhiên ở bước ước lượng, em nên làm tròn số đến hàng chục (ví dụ: [canonical]) để rèn phản xạ nhẩm nhanh nhé!"*.
 
 ---
 
-## 5. Đặc tả Dữ liệu & Bộ 12 Câu hỏi Mẫu (B-02, B-04)
+### 3.4. Ma trận 4 Trạng thái Tính điểm & Công thức `score_percent` (B-06)
 
-### 5.1. Cách mã hóa câu hỏi `estimate` trong Database
-Để giữ nguyên cấu trúc bảng `questions` hiện tại và đảm bảo tương thích 100% với code cũ:
-- Cột `type`: Nhận giá trị mới là `'estimate'`.
-- Cột `correct_answer`: Lưu chuỗi JSON chuẩn hóa hoặc định dạng tất định `"min-max|exact"` (ví dụ: `'{"min":75,"max":85,"exact":81,"canonical":80}'` hoặc `'75-85|81'`).
-  - *Ưu điểm:* Không phá vỡ schema cũ, không bao giờ bị lộ qua `GET /api/question-sets/:setId/questions` vì câu lệnh `SELECT id,type,prompt,options_json,points,category FROM questions` trong `server/api.js` vốn đã loại trừ cột `correct_answer` (**B-04**).
-- Cột `options_json`: Có thể lưu gợi ý bậc làm tròn hiển thị trên UI (ví dụ: `'{"roundTo":10,"unitLabel":"hàng chục"}'`) hoặc để `null`.
+Khi học sinh nộp cặp $(u, v)$, hệ thống xác thực:
+- `estimateOk = isValidInt(u) && (u >= min && u <= max)`
+- `exactOk = isValidInt(v) && (v === exact)`
 
-### 5.2. Danh sách 12 Fixture / Câu hỏi Synthetic tái lập được (`B-02`)
+| Trạng thái | `estimateOk` | `exactOk` | Điểm nhận được (`earnedPoints`) | Cờ `correct` | Tính vào `correct_count`? | Phản hồi sư phạm (`feedback` B-06) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **ST-1** | `true` | `true` | **100% điểm câu** ($q.points$) | `true` | **+1** | *"Xuất sắc! Em ước lượng hợp lý (trong khoảng min–max) và tính đúng kết quả chính xác!"* |
+| **ST-2** | `true` | `false` | **50% điểm câu** ($\text{round}(q.points \times 0.5)$) | `false` | **+0** | *"Em ước lượng khoảng rất tốt! Tuy nhiên kết quả tính chính xác còn nhầm, em kiểm tra lại bảng nhân/chia nhé."* |
+| **ST-3** | `false` | `true` | **50% điểm câu** ($\text{round}(q.points \times 0.5)$) | `false` | **+0** | *"Em tính ra kết quả chính xác đúng rồi! Nhưng bước ước lượng ban đầu chưa sát khoảng hợp lý, em nhớ làm tròn số nhé."* |
+| **ST-4** | `false` | `false` | **0% điểm câu** ($0$) | `false` | **+0** | *"Cả số ước lượng và kết quả tính đúng đều chưa chính xác. Em hãy làm tròn số để ước lượng khoảng trước rồi tính lại nhé!"* |
 
-Dưới đây là 12 câu hỏi mẫu trong `data/seed.json` bao phủ đầy đủ các phép tính Cộng, Trừ, Nhân trong phạm vi chương trình Toán lớp 3:
-
-| STT | Mã câu (`id`) | Đề bài (`prompt`) | Bậc làm tròn | Ước lượng chuẩn (`canonical`) | Khoảng hợp lý `[min, max]` | Kết quả đúng (`exact`) | Điểm (`points`) |
-| :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| 1 | `est-1` | Làm tròn đến hàng chục để ước lượng rồi tính: **38 + 43** | Hàng chục (10) | $40 + 40 = 80$ | `[75, 85]` | **81** | 5 |
-| 2 | `est-2` | Làm tròn đến hàng chục để ước lượng rồi tính: **62 + 29** | Hàng chục (10) | $60 + 30 = 90$ | `[85, 95]` | **91** | 5 |
-| 3 | `est-3` | Làm tròn đến hàng chục để ước lượng rồi tính: **81 - 28** | Hàng chục (10) | $80 - 30 = 50$ | `[45, 55]` | **53** | 5 |
-| 4 | `est-4` | Làm tròn đến hàng chục để ước lượng rồi tính: **94 - 37** | Hàng chục (10) | $90 - 40 = 50$ | `[45, 60]` | **57** | 5 |
-| 5 | `est-5` | Làm tròn đến hàng trăm để ước lượng rồi tính: **215 + 389** | Hàng trăm (100) | $200 + 400 = 600$ | `[550, 650]` | **604** | 10 |
-| 6 | `est-6` | Làm tròn đến hàng trăm để ước lượng rồi tính: **482 + 316** | Hàng trăm (100) | $500 + 300 = 800$ | `[750, 850]` | **798** | 10 |
-| 7 | `est-7` | Làm tròn đến hàng trăm để ước lượng rồi tính: **712 - 295** | Hàng trăm (100) | $700 - 300 = 400$ | `[350, 450]` | **417** | 10 |
-| 8 | `est-8` | Làm tròn đến hàng trăm để ước lượng rồi tính: **891 - 412** | Hàng trăm (100) | $900 - 400 = 500$ | `[450, 550]` | **479** | 10 |
-| 9 | `est-9` | Làm tròn số có hai chữ số đến hàng chục để ước lượng rồi tính: **29 × 3** | Hàng chục (10) | $30 \times 3 = 90$ | `[80, 95]` | **87** | 10 |
-| 10 | `est-10` | Làm tròn số có hai chữ số đến hàng chục để ước lượng rồi tính: **41 × 4** | Hàng chục (10) | $40 \times 4 = 160$ | `[155, 170]` | **164** | 10 |
-| 11 | `est-11` | Khu vườn có **192** cây cam và **207** cây bưởi. Hãy ước lượng (làm tròn hàng trăm) rồi tính tổng số cây. | Hàng trăm (100) | $200 + 200 = 400$ | `[350, 450]` | **399** | 10 |
-| 12 | `est-12` | Một cuộn dây dài **508** m, đã cắt dùng **194** m. Hãy ước lượng (làm tròn hàng trăm) rồi tính số mét dây còn lại. | Hàng trăm (100) | $500 - 200 = 300$ | `[250, 350]` | **314** | 10 |
+#### Công thức tổng hợp điểm:
+- **Số câu hoàn thành trọn vẹn (`correct_count`):**
+  $$\text{correct\_count} = \sum_{i=1}^{N} [\text{detail}[i].\text{correct} == \text{true}]$$
+- **Điểm phần trăm (`score_percent`):**
+  $$\text{score\_percent} = \text{round}\left( \frac{\sum_{i=1}^{N} \text{detail}[i].\text{earnedPoints}}{\sum_{i=1}^{N} q[i].\text{points}} \times 100 \right)$$
 
 ---
 
-## 6. Bảng Tiêu chí Nghiệm thu (Acceptance Criteria — B-01 đến B-12)
+## 4. Đặc tả Use Cases & Sơ đồ Luồng hoạt động (Use Case & Activity Diagrams)
 
-| Mã YC | Mô tả yêu cầu | Tiêu chí nghiệm thu (Given / When / Then) | Phương pháp kiểm tra |
-| :---: | :--- | :--- | :--- |
-| **B-01** | Dạng bài mới truy cập được từ luồng học hiện có, không phải trang demo rời | **Given** học sinh đăng nhập vào hệ thống,<br/>**When** truy cập Trang chủ / Mục lục SGK hoặc Luyện tập,<br/>**Then** nhìn thấy bài học/bộ đề ước lượng và bấm vào làm bài trực tiếp trên luồng chính (`lesson.html` / `exercise.html`). | Kiểm tra UI & E2E Flow |
-| **B-02** | Có tối thiểu 12 fixture/câu hỏi synthetic tái lập được | **Given** một môi trường mới chạy `npm run reset-db && npm start`,<br/>**When** truy vấn bảng `questions WHERE type = 'estimate'`,<br/>**Then** có ít nhất 12 bản ghi câu hỏi với đầy đủ thông tin `min`, `max`, `exact`. | Automated Test (DB check) |
-| **B-03** | Quy tắc tạo và chấm ước lượng được mô tả rõ, tất định và test được | **Given** hàm chấm điểm `gradeEstimateQuestion(question, givenAnswer)`,<br/>**When** gọi nhiều lần với cùng một bộ đầu vào,<br/>**Then** luôn trả về kết quả y hệt nhau (100% deterministic, không dùng `Math.random`). | Unit Test |
-| **B-04** | API không trả đáp án đúng trước khi nộp | **Given** người dùng gọi `GET /api/question-sets/:setId/questions`,<br/>**When** kiểm tra toàn bộ JSON trả về,<br/>**Then** không tồn tại trường `correct_answer`, `correctAnswer`, `min`, `max`, hay `exact` trong bất kỳ phần tử câu hỏi nào. | API Security Test |
-| **B-05** | Server chấm và lưu kết quả; refresh không làm mất trạng thái đã lưu | **Given** học sinh nộp bài qua `POST /api/submissions`,<br/>**When** tải lại trang hoặc gọi `GET /api/me/progress`,<br/>**Then** `bestScore`, `completed` và `totalStars` trong DB được giữ nguyên. | Integration Test |
-| **B-06** | Có feedback phân biệt "ước lượng hợp lý" với "kết quả chính xác" | **Given** học sinh nộp câu trả lời ước lượng đúng (`80` $\in [75, 85]$) nhưng tính đúng sai (`82` $\neq 81$),<br/>**When** nhận response từ `POST /api/submissions`,<br/>**Then** kết quả chi tiết trả về `estimateOk: true`, `exactOk: false` kèm thông điệp phân biệt rõ hai bước trên UI. | API & UI Test |
-| **B-07** | Không sửa `server/auth.js`, session, tài khoản mẫu hoặc deployment | **Given** nhánh code của nhóm so với commit gốc đã pin,<br/>**When** chạy `git diff` trên `server/auth.js`, `Dockerfile`, `DEPLOY.md` và các route `/api/auth/*`, `/api/teacher/*`, `/api/admin/*`,<br/>**Then** không có sự thay đổi trái phép nào. | Git Diff Audit |
-| **B-08** | Có test tự động cho `normal`, `boundary`, `invalid input` và `scoring` | **Given** bộ test tự động trong thư mục `tests/`,<br/>**When** thực thi,<br/>**Then** kiểm tra đủ 4 nhóm: giá trị thường, biên `min`/`max`/`min-1`/`max+1`, đầu vào lỗi (chữ, rỗng, null, số thập phân), và tính điểm/sao. | Test Suite Review |
-| **B-09** | Bổ sung lệnh `npm test`; test đạt từ clean checkout | **Given** repo vừa clone sạch,<br/>**When** chạy `npm ci && npm test`,<br/>**Then** toàn bộ test chạy tự động và PASS với exit code `0`. | CLI Check |
-| **B-10** | Bổ sung CI chạy `npm ci` và `npm test` trên Pull Request | **Given** cấu hình `.github/workflows/ci.yml`,<br/>**When** tạo hoặc cập nhật Pull Request trên GitHub,<br/>**Then** GitHub Actions tự động kích hoạt `npm ci` và `npm test` và báo trạng thái xanh. | GitHub Actions Check |
-| **B-11** | Không có PII/secret; chỉ dùng alias/tài khoản synthetic | **Given** toàn bộ mã nguồn, dữ liệu seed và lịch sử commit,<br/>**When** quét nội dung,<br/>**Then** không chứa email cá nhân thật, SĐT thật, hay khóa bí mật (`SESSION_SECRET`, `ADMIN_SECRET`, `GOOGLE_CLIENT_ID`). | Security Audit |
-| **B-12** | Giao diện dùng được bằng bàn phím cho luồng chính và có thông báo lỗi dễ hiểu | **Given** học sinh chỉ sử dụng bàn phím trên trang làm bài,<br/>**When** nhấn `Tab` qua các ô nhập ước lượng/tính đúng và nhấn `Enter` để nộp,<br/>**Then** luồng hoạt động trơn tru; nếu nhập sai định dạng thì hiện thông báo lỗi tiếng Việt rõ ràng, có thuộc tính trợ năng (`aria-live` / `label`). | Accessibility & UX Check |
+### 4.1. Sơ đồ Use Case — Tác nhân Học sinh (Lớp 3)
+
+![Sơ đồ Use Case Học sinh](./docs/usecase-hoc-sinh.svg)
+
+- **Các nhóm thao tác chính của Học sinh:**
+  1. **Nhóm thao tác Truy cập bài tập Ước lượng:** Chọn bài học Ước lượng từ Mục lục SGK / Trang chủ (`B-01`), mở phiếu bài tập trên luồng học chính (`lesson.html` / `exercise.html`), tải danh sách câu hỏi an toàn ẩn đáp án đúng (`B-04`).
+  2. **Nhóm thao tác Thực hiện Ước lượng & Tính đúng:** Xem đề bài & gợi ý làm tròn, nhập Bước 1 (Số Ước lượng) trước, nhập Bước 2 (Kết quả tính đúng) sau, hoặc làm mới (Reset) các ô nhập.
+  3. **Nhóm thao tác Điều khiển bàn phím & Báo lỗi:** Di chuyển giữa các ô bằng `Tab` / `Shift+Tab`, nhấn `Enter` để nộp bài không cần chuột, nhận thông báo lỗi tiếng Việt dễ hiểu khi bỏ trống hoặc nhập sai định dạng (`B-12`).
+  4. **Nhóm thao tác Nộp bài & Chấm điểm Server:** Gửi cặp `(estimate, exact)` lên `POST /api/submissions`, Server kiểm tra tất định khoảng `min <= estimate <= max` và `exact === đáp số đúng` (`B-03`).
+  5. **Nhóm thao tác Nhận phản hồi (Feedback B-06):** Xem đánh giá riêng cho Bước 1 (*"Ước lượng hợp lý"* hay *"Chưa hợp lý"*) và Bước 2 (*"Kết quả chính xác"* Đúng hay Sai), xem giải thích khoảng hợp lý `[min, max]` sau khi nộp.
+  6. **Nhóm thao tác Lưu điểm & Đồng bộ Tiến độ:** Lưu lịch sử lượt làm (`attempts`) và kỷ lục điểm cao nhất (`progress`), nhận sao thưởng khi vượt kỷ lục cũ, tải lại trang (`F5`) vẫn giữ nguyên điểm số và trạng thái mở khóa (`B-05`).
 
 ---
 
-## 7. Kế hoạch Kiểm thử Tự động (Test Plan — M1)
+### 4.2. Sơ đồ Use Case — Tác nhân Giáo viên (Chủ nhiệm)
 
-Nhóm sử dụng trình chạy test tích hợp sẵn của Node.js (`node --test`, không phát sinh thư viện ngoài gây xung đột native module) để kiểm thử toàn diện:
+![Sơ đồ Use Case Giáo viên](./docs/usecase-giao-vien.svg)
 
-### 7.1. Danh mục Kịch bản Kiểm thử (Test Cases Matrix)
-
-| Mã Test | Nhóm (B-08) | Đầu vào thử nghiệm (với câu `38 + 43`: `min=75, max=85, exact=81`) | Kết quả kỳ vọng (`estimateOk`, `exactOk`, `correct`) |
-| :---: | :--- | :--- | :--- |
-| **TC-01** | **Normal** | `{ estimate: "80", exact: "81" }` (Đúng chuẩn làm tròn & đúng kết quả) | `estimateOk: true`, `exactOk: true`, `correct: true` (+đủ điểm) |
-| **TC-02** | **Normal** | `{ estimate: "78", exact: "81" }` (Nằm trong khoảng hợp lý & đúng kết quả) | `estimateOk: true`, `exactOk: true`, `correct: true` |
-| **TC-03** | **Boundary (Biên dưới)** | `{ estimate: "75", exact: "81" }` (`u === min`) | `estimateOk: true`, `exactOk: true`, `correct: true` |
-| **TC-04** | **Boundary (Biên trên)** | `{ estimate: "85", exact: "81" }` (`u === max`) | `estimateOk: true`, `exactOk: true`, `correct: true` |
-| **TC-05** | **Boundary (Ngoài biên dưới)** | `{ estimate: "74", exact: "81" }` (`u === min - 1`) | `estimateOk: false`, `exactOk: true`, `correct: false` (Feedback: Ước lượng lệch, tính đúng) |
-| **TC-06** | **Boundary (Ngoài biên trên)** | `{ estimate: "86", exact: "81" }` (`u === max + 1`) | `estimateOk: false`, `exactOk: true`, `correct: false` (Feedback: Ước lượng lệch, tính đúng) |
-| **TC-07** | **Partial (Đúng ước lượng, sai tính đúng)** | `{ estimate: "80", exact: "82" }` | `estimateOk: true`, `exactOk: false`, `correct: false` (Feedback: Ước lượng hợp lý, tính chính xác sai) |
-| **TC-08** | **Invalid Input (Rỗng / Khoảng trắng)** | `{ estimate: "", exact: "   " }` hoặc `null` / `undefined` | `estimateOk: false`, `exactOk: false`, `correct: false` (Không crash server) |
-| **TC-09** | **Invalid Input (Chữ / Ký tự lạ / Thập phân)** | `{ estimate: "tám mươi", exact: "81.5" }` hoặc `"80abc"` | `estimateOk: false`, `exactOk: false`, `correct: false` (Bác bỏ chuỗi không phải số nguyên) |
-| **TC-10** | **Security (B-04)** | Gọi `GET /api/question-sets/:setId/questions` | HTTP 200; JSON trả về có $\ge 12$ câu, **không có** `correct_answer` hay `min`/`max`/`exact` |
-| **TC-11** | **Scoring & Persistence (B-05)** | Nộp bài qua `POST /api/submissions` $\rightarrow$ gọi `GET /api/me/progress` | Điểm %, số câu đúng, sao thưởng được lưu vào DB; nộp lại điểm thấp hơn không bị cộng lùi hay cày sao |
-| **TC-12** | **Regression (4 type cũ)** | Nộp bài bộ `phieu-bai-9-10` (`compare`, `input`, `paint`) và `bai-15-kiem-tra` (`multiple-choice`) | Chấm đúng 100% như hành vi nguyên bản |
+- **Các nhóm thao tác của Giáo viên (Kế thừa trên hệ thống):**
+  1. **Nhóm thao tác Quản lý câu hỏi Ước lượng:** Xem danh sách bộ đề & câu hỏi dạng `estimate`, thêm/sửa/xóa (CRUD) câu hỏi Ước lượng, cấu hình điểm số và chủ đề.
+  2. **Nhóm thao tác Giao phiếu bài tập Ước lượng:** Chọn bộ câu hỏi Ước lượng để giao cho lớp học (`3A2`), thiết lập hạn nộp bài (`due date`) và ghi chú hướng dẫn làm tròn.
+  3. **Nhóm thao tác Theo dõi & Phân tích kết quả:** Xem số lượng học sinh đã hoàn thành bài tập Ước lượng, xem thống kê tỷ lệ làm sai ở dạng bài *"Ước lượng trước khi tính đúng"*, xem tiến độ & điểm cao nhất trung bình của lớp.
+  4. **Nhóm thao tác Báo cáo & Tổng hợp điểm:** Tra cứu điểm trung bình & tổng sao của từng học sinh, xuất file báo cáo lớp (`CSV / Excel`) bao gồm kết quả làm bài Ước lượng.
 
 ---
 
-## 8. Tóm tắt Quyết định Kiến trúc đầu tiên (ADR-001 Summary)
+### 4.3. Sơ đồ Activity — Luồng hoạt động của Học sinh (Swimlane 2 cột)
 
-*(Chi tiết đầy đủ được trình bày trong tài liệu `DECISIONS.md`)*
+![Sơ đồ Activity Học sinh](./docs/activity-hoc-sinh.svg)
 
-- **Vấn đề:** Làm thế nào để lưu trữ khoảng ước lượng `[min, max]` và kết quả chính xác `exact` trong SQLite cũng như gửi câu trả lời 2 bước từ Client lên Server mà ít xâm lấn nhất vào codebase hiện tại?
-- **Các phương án đã cân nhắc:**
-  - *Phương án A:* Thêm 3 cột mới (`min_estimate`, `max_estimate`, `exact_answer`) vào bảng `questions`.
-  - *Phương án B (Được chọn):* Thêm `type = 'estimate'` và mã hóa cấu trúc đáp án `{"min":75,"max":85,"exact":81,"canonical":80}` ngay trong cột `correct_answer` hiện có của bảng `questions`; phía Client gửi câu trả lời dạng `{ estimate: "80", exact: "81" }` (hoặc chuỗi `"80|81"`) trong object `answers[questionId]`.
-- **Lý do chọn Phương án B:**
-  1. **An toàn bảo mật mặc định (B-04):** Vì `GET /api/question-sets/:setId/questions` hiện tại không `SELECT` cột `correct_answer`, nên toàn bộ thông tin `min`, `max`, `exact` tự động được giấu kín 100% mà không sợ quên ẩn cột mới.
-  2. **Không phá vỡ Schema & Tương thích ngược:** Không cần `ALTER TABLE` phức tạp, giữ nguyên 100% cách hoạt động của 4 `type` câu hỏi cũ và trang quản trị giáo viên.
-  3. **Dễ kiểm thử (Testable):** Hàm parse và chấm điểm câu hỏi `estimate` là một hàm thuần (pure function) độc lập, nhận vào `q.correct_answer` và `answers[q.id]`, trả về `{ correct, estimateOk, exactOk, feedback }`.
+---
+
+### 4.4. Sơ đồ Activity — Luồng hoạt động của Giáo viên (Swimlane 2 cột)
+
+![Sơ đồ Activity Giáo viên](./docs/activity-giao-vien.svg)
+
+---
+
+## 5. Danh mục 12 Câu hỏi Synthetic trên các Phép Nhân / Chia đã có (B-02, Mục 8.2 & 8.4)
+
+Toàn bộ 12 câu hỏi mẫu dưới đây được xây dựng trên **các phép nhân và phép chia thuộc các bài học đã có sẵn trong `data/seed.json`** (Bảng nhân/chia 6, 7, 8, 9 từ `bai-9` đến `bai-14` và Nhân/chia số có 2 chữ số với số có 1 chữ số ở `bai-23`, `bai-26`), tuân thủ tuyệt đối yêu cầu **không thêm nội dung SGK mới ngoài phạm vi (Mục 8.4)**:
+
+| STT | Mã câu (`id`) | Gắn với bài học đã có | Đề bài (`prompt`) | Quy tắc ước lượng | Ước lượng chuẩn (`canonical`) | Khoảng hợp lý `[min, max]` | Kết quả đúng (`exact`) | Điểm |
+| :---: | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: |
+| 1 | `est-1` | `bai-9` (Bảng nhân 6) | Ước lượng vào khoảng chục gần nhất rồi tính: **6 × 7 = ?** | Khoảng chục chứa tích | `40` | **`[40, 50]`** | **42** | 5 |
+| 2 | `est-2` | `bai-9` (Bảng nhân 6) | Ước lượng vào khoảng chục gần nhất rồi tính: **6 × 8 = ?** | Khoảng chục chứa tích | `50` | **`[40, 50]`** | **48** | 5 |
+| 3 | `est-3` | `bai-11` (Bảng nhân 7) | Ước lượng vào khoảng chục gần nhất rồi tính: **7 × 8 = ?** | Khoảng chục chứa tích | `60` | **`[50, 60]`** | **56** | 5 |
+| 4 | `est-4` | `bai-14` (Bảng nhân 9) | Ước lượng vào khoảng chục gần nhất rồi tính: **9 × 7 = ?** | Khoảng chục chứa tích | `60` | **`[60, 70]`** | **63** | 5 |
+| 5 | `est-5` | `bai-23` (Nhân 2 chữ số) | Làm tròn thừa số thứ nhất đến hàng chục để ước lượng rồi tính: **19 × 6 = ?** | $20 \times 6 = 120$ | `120` | **`[110, 120]`** | **114** | 10 |
+| 6 | `est-6` | `bai-23` (Nhân 2 chữ số) | Làm tròn thừa số thứ nhất đến hàng chục để ước lượng rồi tính: **21 × 6 = ?** | $20 \times 6 = 120$ | `120` | **`[120, 130]`** | **126** | 10 |
+| 7 | `est-7` | `bai-23` (Nhân 2 chữ số) | Làm tròn thừa số thứ nhất đến hàng chục để ước lượng rồi tính: **29 × 7 = ?** | $30 \times 7 = 210$ | `210` | **`[200, 210]`** | **203** | 10 |
+| 8 | `est-8` | `bai-23` (Nhân 2 chữ số) | Làm tròn thừa số thứ nhất đến hàng chục để ước lượng rồi tính: **31 × 8 = ?** | $30 \times 8 = 240$ | `240` | **`[240, 250]`** | **248** | 10 |
+| 9 | `est-9` | `bai-10` / `bai-26` (Chia cho 6) | Ước lượng thương rồi tính chính xác: **78 : 6 = ?** | $78 \approx 80$, thương gần $13$ ($\pm 2$) | `13` | **`[11, 15]`** | **13** | 10 |
+| 10 | `est-10` | `bai-12` / `bai-26` (Chia cho 7) | Ước lượng thương rồi tính chính xác: **98 : 7 = ?** | $98 \approx 100$, thương gần $14$ ($\pm 2$) | `14` | **`[12, 16]`** | **14** | 10 |
+| 11 | `est-11` | `bai-13` (Nhân với 8) | Mỗi hộp có **8** chiếc bút màu. Hỏi **18** hộp như thế có khoảng bao nhiêu chiếc (làm tròn 18 đến hàng chục) và chính xác bao nhiêu chiếc? | $20 \times 8 = 160$ | `160` | **`[140, 160]`** | **144** | 10 |
+| 12 | `est-12` | `bai-14` / `bai-26` (Chia cho 9) | Có **99** bông hoa cắm đều vào **9** lọ. Hãy ước lượng xem mỗi lọ có khoảng mấy bông hoa rồi tính kết quả chính xác. | $99 \approx 90$, thương gần $11$ ($\pm 2$) | `11` | **`[9, 13]`** | **11** | 10 |
+
+---
+
+## 6. Bảng Tiêu chí Nghiệm thu Bắt buộc (Acceptance Criteria — Mục 8.3: B-01 đến B-12)
+
+| ID | Tiêu chí bắt buộc của đề thi | Điều kiện nghiệm thu chi tiết (Given / When / Then) |
+| :---: | :--- | :--- |
+| **B-01** | Dạng bài mới truy cập được từ luồng học hiện có, không phải trang demo rời | **Given** học sinh đăng nhập vào hệ thống,<br/>**When** mở Trang chủ, Mục lục SGK (`muc-luc.html`) hoặc trang Luyện tập (`exercise.html` / `lesson.html`),<br/>**Then** truy cập và làm được ngay bài tập *"Ước lượng kết quả trước khi tính đúng"* thuộc bài học nhân/chia mà không cần gõ URL demo tách rời. |
+| **B-02** | Có tối thiểu 12 fixture/câu hỏi synthetic tái lập được | **Given** chạy lệnh `npm run reset-db && npm start` từ dữ liệu mồi `data/seed.json`,<br/>**When** truy vấn cơ sở dữ liệu SQLite,<br/>**Then** có tối thiểu 12 câu hỏi thuộc `type = 'estimate'` về phép nhân/chia với đầy đủ tham số `min`, `max`, `exact`. |
+| **B-03** | Quy tắc tạo và chấm ước lượng được mô tả rõ, tất định và test được | **Given** một câu hỏi ước lượng có bộ tham số `(min, max, exact)` và câu trả lời của học sinh `(u, v)`,<br/>**When** gọi hàm chấm điểm trên Server nhiều lần liên tiếp,<br/>**Then** kết quả trả về luôn cố định 100% theo công thức $min \le u \le max$ và $v = exact$, không sử dụng hàm ngẫu nhiên hay gọi LLM runtime. |
+| **B-04** | API không trả đáp án đúng trước khi nộp | **Given** trình duyệt gọi `GET /api/question-sets/:setId/questions`,<br/>**When** kiểm tra payload JSON phản hồi từ Server,<br/>**Then** không có bất kỳ trường nào chứa `correct_answer`, `correctAnswer`, `min`, `max`, hay `exact`. |
+| **B-05** | Server chấm và lưu kết quả; refresh không làm mất trạng thái đã lưu | **Given** học sinh nộp bài qua `POST /api/submissions`,<br/>**When** Server chấm điểm xong và học sinh nhấn `F5` (Refresh) hoặc gọi `GET /api/me/progress`,<br/>**Then** lịch sử lượt làm (`attempts`), điểm cao nhất (`progress.best_score`), trạng thái hoàn thành (`completed`) và tổng sao (`users.total_stars`) được bảo toàn trong SQLite. |
+| **B-06** | Có feedback phân biệt "ước lượng hợp lý" với "kết quả chính xác" | **Given** học sinh nộp bài với 1 trong 4 tổ hợp (Đúng cả 2 / Ước lượng đúng - Tính đúng sai / Ước lượng sai - Tính đúng đúng / Sai cả 2),<br/>**When** nhận phản hồi từ `POST /api/submissions`,<br/>**Then** mỗi câu hỏi trả về `estimateOk`, `exactOk` và thông điệp `feedback` riêng biệt, hiển thị rõ ràng trạng thái từng bước trên giao diện. |
+| **B-07** | Không sửa `server/auth.js`, session, tài khoản mẫu hoặc deployment | **Given** đối chiếu `git diff` với commit gốc đã pin của starter repo,<br/>**When** kiểm tra `server/auth.js`, các route `/api/auth/*`, `/api/teacher/*`, `/api/admin/*`, danh sách tài khoản mẫu và `Dockerfile`/`DEPLOY.md`,<br/>**Then** các thành phần này không bị thay đổi. |
+| **B-08** | Có test tự động cho `normal`, `boundary`, `invalid input` và `scoring` | **Given** bộ kiểm thử tự động của dự án (đặc tả chi tiết trong `TEST_PLAN.md`),<br/>**When** thực thi kiểm thử,<br/>**Then** kiểm tra đầy đủ 4 nhóm: đầu vào chuẩn (`normal`), các giá trị biên `min`/`max`/`min-1`/`max+1` (`boundary`), dữ liệu lỗi (`invalid input`), và tính điểm/sao/hồi quy (`scoring`). |
+| **B-09** | Bổ sung lệnh `npm test`; test đạt từ clean checkout | **Given** một bản sao mã nguồn vừa clone sạch,<br/>**When** chạy `npm ci` và `npm test`,<br/>**Then** toàn bộ các bài kiểm thử tự động chạy và đạt `PASS` (exit code `0`). |
+| **B-10** | Bổ sung CI chạy `npm ci` và `npm test` trên Pull Request | **Given** file cấu hình `.github/workflows/ci.yml` trong repository,<br/>**When** tạo hoặc cập nhật Pull Request trên GitHub,<br/>**Then** GitHub Actions tự động thực thi `npm ci` và `npm test` thành công. |
+| **B-11** | Không có PII/secret; chỉ dùng alias/tài khoản synthetic | **Given** toàn bộ mã nguồn, dữ liệu câu hỏi và lịch sử commit,<br/>**When** rà soát bảo mật và quyền riêng tư,<br/>**Then** chỉ chứa các tài khoản/nhân vật giả lập (`hocsinh01`..`99`, `giaovien01`), không chứa thông tin cá nhân thật hay khóa bí mật. |
+| **B-12** | Giao diện dùng được bằng bàn phím cho luồng chính và có thông báo lỗi dễ hiểu | **Given** học sinh thao tác trên trang làm bài chỉ bằng bàn phím,<br/>**When** nhấn `Tab`/`Shift+Tab` để nhập Bước 1 (Ước lượng) $\rightarrow$ Bước 2 (Tính đúng) và nhấn `Enter` để nộp bài,<br/>**Then** luồng hoạt động đầy đủ; nếu bỏ trống hoặc nhập sai kiểu số thì hiển thị thông báo lỗi tiếng Việt thân thiện, dễ hiểu. |
+
+---
+*Các quyết định thiết kế kỹ thuật chi tiết được trình bày tại tài liệu [`DECISIONS.md`](./DECISIONS.md) và kế hoạch kiểm thử chi tiết được trình bày tại [`TEST_PLAN.md`](./TEST_PLAN.md).*
