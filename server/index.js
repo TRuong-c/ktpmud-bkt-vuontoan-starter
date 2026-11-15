@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: '256kb' }));
 app.use(attachUser(db));
+app.use(require('./estimate/router')); // thêm dòng này 
 app.use('/api', api);
 app.use(express.static(path.join(__dirname, '..', 'public')));
 

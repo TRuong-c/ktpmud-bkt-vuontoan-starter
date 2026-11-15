@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hướng dẫn: Ước lượng kết quả trước khi tính — Vườn Toán Lớp 3</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;1,6..12,400&amp;family=Quicksand:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="assets/css/tailwind.build.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/tailwind.config.js"></script>
+<link href="assets/css/app.css" rel="stylesheet"/>
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen" data-page="lesson">
+<aside id="app-sidebar"></aside>
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,97,39,0.06)]"><div class="h-20 w-full px-gutter-mobile lg:px-margin max-w-7xl mx-auto flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><img alt="Logo Trường Tiểu học Hoàng Mai" class="h-9 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5cjuWWAWsjimfXPTn37XDLU9xQesLsZAhpXmz3qKg6zVBRXPYMUjkoy-u3U2wiL_yrqsnHsIgOzm9-nS0UWwpaKbbVQOwW8mW8SyGA8Nloqjgx9JlcGE9Vtnrjx7AJa39zCrfwQPTfHf1aB9jkJUzew1Qkj12tiD4YtF0Dd8cNQsRpPZYsW-AIubPqVcPo2OFVI3aKps_DVjfVlf5uBkjBNCeKiJ6P-_eCLFvTEl5uEWKgZzltQgwNg"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight leading-none">VƯỜN TOÁN LỚP 3</span><span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Trường Tiểu học Hoàng Mai</span></div></div><nav class="hidden xl:flex items-center gap-space-xs bg-surface-container-low p-1.5 rounded-full" data-active-classes="bg-primary text-on-primary font-bold shadow-sm rounded-full"><a class="font-label-md text-label-md px-4 py-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="muc-luc-sgk" href="muc-luc.html">Mục Lục SGK</a><a class="font-label-md text-label-md px-4 py-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="luyen-tap-va-kiem-tra" href="#">Luyện Tập &amp; Kiểm Tra</a><a class="font-label-md text-label-md px-4 py-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="dau-truong-toan-hoc" href="#">Đấu Trường Toán Học</a><a class="font-label-md text-label-md px-4 py-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="goc-giao-vien" href="#">Góc Giáo Viên</a><a class="font-label-md text-label-md px-4 py-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="bang-xep-hang" href="#">Bảng Xếp Hạng</a></nav><div class="flex items-center gap-space-sm"><div class="hidden md:flex items-center gap-space-xs bg-surface-container-lowest px-3 py-1.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-headline-sm text-label-sm"><span class="material-symbols-outlined text-[18px] text-tertiary">star</span><span>1.250</span></div><div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-headline-sm text-label-sm"><span class="material-symbols-outlined text-[18px] text-secondary">emoji_events</span><span>Hạng 2</span></div></div><div class="flex items-center gap-2.5 pl-space-xs py-1 pr-3 bg-surface-container-low rounded-full"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKwA6FT33BYSGdO7z6NLWGOVMAz6PyDh1E0kzf5-4Jvs9IlUa9osjTxIXPXV-SiFr0-mXjeZ74Qb_GUTnRX2F5TYyF9mPoUne33RlMuy7UGiGYAjE_Ohrnd1KFtfLB3IciZMNb82xMZ_ElTdn4e4fIhabnLLL2wAwILSbWyGw7vjQJ69Pf-_Km0CwIhQ90vjGunVdgmOyT2a9i2YxWiHYyM80L0aXMA0ZpmFcwDyP86T0St2quGf_YAw"/><div class="flex flex-col text-left"><span class="font-headline-sm text-label-sm text-on-surface leading-tight">Học sinh</span><span class="font-label-sm text-[11px] text-primary font-bold leading-none">Lớp 3A2</span></div></div></div></div></header>
+
+<main class="w-full pt-24 pb-10 bg-background min-h-screen">
+  <section class="w-full px-gutter-mobile lg:px-margin max-w-4xl mx-auto">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <a href="estimate.html" class="inline-flex items-center gap-1.5 font-headline-sm text-label-md text-primary hover:underline"><span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span> Vào phiếu luyện tập</a>
+      <a href="index.html" class="inline-flex items-center gap-1.5 rounded-full bg-surface-container px-4 py-2 font-label-md text-label-md text-primary hover:bg-surface-container-high focus:outline-none focus:ring-4 focus:ring-primary-fixed"><span class="material-symbols-outlined text-[18px]" aria-hidden="true">home</span> Về Trang chủ</a>
+    </div>
+
+    <header class="mt-3 rounded-3xl bg-surface-container-lowest shadow-[0_10px_30px_rgba(0,97,39,0.08)] p-6">
+      <p class="font-label-sm text-label-sm text-tertiary font-bold uppercase tracking-wider">Hướng dẫn dành cho học sinh &amp; giáo viên</p>
+      <h1 class="font-headline-lg text-headline-lg text-primary mt-1">Cách làm bài “Ước lượng kết quả trước khi tính đúng”</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant mt-2">Dạng bài mới gồm 12 câu nhân/chia lấy từ nội dung các bài học có sẵn. Mỗi câu có 2 bước và được chấm tự động trên máy chủ.</p>
+    </header>
+
+    <section class="mt-5 rounded-3xl bg-surface-container-lowest p-6 shadow-[0_8px_24px_rgba(0,97,39,0.06)]" aria-labelledby="guide-steps">
+      <h2 id="guide-steps" class="font-headline-md text-headline-md text-primary">1. Ước lượng rồi tính chính xác</h2>
+      <ol class="mt-3 space-y-3">
+        <li class="rounded-2xl border-2 border-secondary/40 bg-secondary-container/40 p-4">
+          <p class="font-label-md text-label-md font-bold">Bước 1 — Ước lượng</p>
+          <p class="font-body-md text-body-md mt-1">Với phép nhân có số hai chữ số, nhập giá trị ban đầu và giá trị sau khi làm tròn. Sau đó kéo núm tròn để chọn một khoảng rộng 10 đơn vị; với phép chia, khoảng rộng 2 đơn vị. Tia số không điền sẵn khoảng đáp án.</p>
+        </li>
+        <li class="rounded-2xl border-2 border-primary/30 bg-primary-fixed/40 p-4">
+          <p class="font-label-md text-label-md font-bold">Bước 2 — Tính đúng</p>
+          <p class="font-body-md text-body-md mt-1">Sau khi chọn khoảng ước lượng, tự tính rồi nhập kết quả chính xác. Ô kết quả chính xác chỉ mở sau khi em kéo núm chọn khoảng.</p>
+        </li>
+      </ol>
+      <p class="mt-3 rounded-xl bg-surface-container-low px-4 py-3 font-body-sm text-body-sm">Sau khi nộp, em sẽ thấy điểm và nhận xét riêng cho từng câu cùng đáp án chính xác để kiểm tra lại.</p>
+    </section>
+
+    <section class="mt-5 rounded-3xl bg-surface-container-lowest p-6 shadow-[0_8px_24px_rgba(0,97,39,0.06)]" aria-labelledby="guide-score">
+      <h2 id="guide-score" class="font-headline-md text-headline-md text-primary">2. Cách chấm điểm</h2>
+      <div class="mt-3 overflow-x-auto">
+        <table class="w-full text-left font-body-sm text-body-sm border-collapse">
+          <caption class="sr-only">Bảng điểm theo kết quả từng bước</caption>
+          <thead><tr class="bg-surface-container-low"><th class="p-3">Bước 1 (Ước lượng)</th><th class="p-3">Bước 2 (Tính đúng)</th><th class="p-3">Điểm của câu</th></tr></thead>
+          <tbody>
+            <tr class="border-t border-outline-variant/40"><td class="p-3">Đúng</td><td class="p-3">Đúng</td><td class="p-3 font-bold text-primary">100%</td></tr>
+            <tr class="border-t border-outline-variant/40"><td class="p-3">Đúng</td><td class="p-3">Sai</td><td class="p-3 font-bold">50%</td></tr>
+            <tr class="border-t border-outline-variant/40"><td class="p-3">Sai</td><td class="p-3">Đúng</td><td class="p-3 font-bold">50%</td></tr>
+            <tr class="border-t border-outline-variant/40"><td class="p-3">Sai</td><td class="p-3">Sai</td><td class="p-3 font-bold">0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-3 font-body-sm text-body-sm text-on-surface-variant">Số câu “đúng” trong kết quả chỉ tính khi <strong>cả hai bước cùng đúng</strong>. Điểm phần trăm của cả phiếu = tổng điểm đạt được chia tổng điểm tối đa. Sao vàng chỉ cộng thêm khi kết quả vượt điểm cao nhất lần trước.</p>
+    </section>
+
+    <section class="mt-5 rounded-3xl bg-surface-container-lowest p-6 shadow-[0_8px_24px_rgba(0,97,39,0.06)]" aria-labelledby="guide-keyboard">
+      <h2 id="guide-keyboard" class="font-headline-md text-headline-md text-primary">3. Dùng bàn phím</h2>
+      <ul class="mt-2 list-disc pl-5 space-y-1 font-body-md text-body-md">
+        <li><kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Tab</kbd> chuyển từ hai ô làm tròn đến tia số; di chuyển khoảng bằng phím mũi tên rồi Tab sang kết quả chính xác.</li>
+        <li><kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Shift</kbd> + <kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Tab</kbd> quay lại ô trước.</li>
+        <li><kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Enter</kbd> ở ô trước làm tròn chuyển sang ô sau; ở ô sau chuyển đến tia số; ở tia số mở bước tính chính xác sau khi chọn khoảng.</li>
+      </ul>
+      <p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">Nếu nhập chữ hoặc dấu, ô sẽ báo lỗi tiếng Việt ngay bên dưới câu và con trỏ quay lại ô cần sửa.</p>
+    </section>
+
+    <section class="mt-5 rounded-3xl bg-tertiary-fixed/50 p-6 shadow-[0_8px_24px_rgba(230,164,0,0.18)]" aria-labelledby="guide-teacher">
+      <h2 id="guide-teacher" class="font-headline-md text-headline-md text-primary">4. Dành cho giáo viên</h2>
+      <ul class="mt-2 list-disc pl-5 space-y-1 font-body-md text-body-md">
+        <li>Phiếu nằm trong bài <strong>Bài 9</strong> ở Mục lục SGK và có thẻ lối vào ở Trang chủ, Mục lục, Phòng Luyện tập và Góc Thầy Cô.</li>
+        <li>Mọi câu đều dùng phép nhân/chia thuộc nội dung lớp 3 đã có; không thêm bài học mới.</li>
+        <li>Đáp án và cách chấm nằm hoàn toàn ở máy chủ; trình duyệt chỉ nhận đề bài, không nhận đáp án.</li>
+        <li>Kết quả được lưu vào hồ sơ học sinh; làm lại sẽ chỉ cộng sao khi vượt điểm cao nhất.</li>
+      </ul>
+    </section>
+
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a href="estimate.html" class="h-14 px-6 rounded-2xl bg-primary text-on-primary font-headline-sm text-label-lg inline-flex items-center gap-2 shadow-[0_4px_0_0_#005320]"><span class="material-symbols-outlined" aria-hidden="true">play_arrow</span> Vào luyện tập</a>
+      <a href="muc-luc.html" class="h-14 px-6 rounded-2xl bg-surface-container font-headline-sm text-label-lg inline-flex items-center">Mở Mục Lục SGK</a>
+    </div>
+  </section>
+</main>
+
+<footer data-shared-footer="" class="w-full bg-surface-container-lowest shadow-[0_-4px_20px_rgba(0,0,0,0.03)] py-space-lg" data-shared-footer=""><div class="w-full px-gutter-mobile lg:px-margin max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-2xl bg-secondary-container text-on-secondary-container flex items-center justify-center font-headline-md"><span class="material-symbols-outlined">school</span></div><div><p class="font-headline-sm text-label-lg text-primary leading-tight">Trường Tiểu học Hoàng Mai - Hà Nội</p><p class="font-body-sm text-body-sm text-on-surface-variant">Cổng học tập Toán thông minh dành cho học sinh Lớp 3</p></div></div><div class="flex flex-wrap items-center justify-center gap-space-md text-on-surface-variant font-label-md text-label-md"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-primary text-[20px]">support_agent</span> Phòng Tin học &amp; Thiết bị số</span><span class="flex items-center gap-1"><span class="material-symbols-outlined text-primary text-[20px]">call</span> Hotline: (024) 3861 2xxx</span></div><p class="font-body-sm text-body-sm text-on-surface-variant text-center">© 2025 Trường Tiểu học Hoàng Mai. Giữ toàn quyền phát triển nội dung.</p></div></footer>
+<script src="assets/js/core/api.js"></script>
+<script src="assets/js/components/sidebar.js"></script>
+<script src="assets/js/components/navbar.js"></script>
+<script src="assets/js/components/footer.js"></script>
+<script src="assets/js/core/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+/* Wide estimate slider with a neutral track and a clear draggable thumb. */
+.estimate-range {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 32px;
+  border: 0;
+  border-radius: 9999px;
+  background-color: transparent;
+  background-image: linear-gradient(90deg, #cbd5e1 0 100%);
+  background-size: 100% 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: grab;
+  touch-action: pan-y;
+  transition: background 180ms ease, opacity 180ms ease;
+}
+
+.estimate-range.has-selection {
+  background-image: linear-gradient(
+    90deg,
+    #cbd5e1 0 var(--selection-start),
+    #86efac var(--selection-start) var(--selection-end),
+    #cbd5e1 var(--selection-end) 100%
+  );
+}
+
+.estimate-range:active {
+  cursor: grabbing;
+}
+
+.estimate-range::-webkit-slider-runnable-track {
+  height: 10px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.estimate-range::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -7px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: #087a3e;
+  box-shadow: 0 2px 7px rgb(0 0 0 / 22%);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.estimate-range:hover::-webkit-slider-thumb,
+.estimate-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 5px rgb(34 197 94 / 22%), 0 2px 7px rgb(0 0 0 / 22%);
+}
+
+.estimate-range::-moz-range-track {
+  height: 10px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.estimate-range::-moz-range-progress {
+  height: 10px;
+  background: transparent;
+}
+
+.estimate-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: #087a3e;
+  box-shadow: 0 2px 7px rgb(0 0 0 / 22%);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.estimate-range:hover::-moz-range-thumb,
+.estimate-range:focus-visible::-moz-range-thumb {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 5px rgb(34 197 94 / 22%), 0 2px 7px rgb(0 0 0 / 22%);
+}
+
+.estimate-range:disabled {
+  cursor: not-allowed;
+}

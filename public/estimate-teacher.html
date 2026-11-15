@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý Ước lượng — Góc Giáo viên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;1,0,400&family=Quicksand:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="assets/css/tailwind.build.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind.config.js"></script>
+  <link href="assets/css/app.css" rel="stylesheet" />
+</head>
+<body class="min-h-screen bg-background font-body-md text-on-surface antialiased" data-page="estimate-teacher" data-require-role="teacher">
+  <aside id="app-sidebar"></aside>
+  <main class="min-h-screen bg-background px-4 pb-12 pt-8 md:pl-24 lg:pl-28">
+    <div class="mx-auto max-w-7xl space-y-6">
+      <a href="schedule.html" class="inline-flex items-center gap-2 rounded-xl px-3 py-2 font-bold text-primary hover:bg-surface-container focus:outline-none focus:ring-4 focus:ring-primary-fixed">
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Về Góc Thầy Cô
+      </a>
+
+      <section class="rounded-3xl border-2 border-primary/20 bg-gradient-to-r from-secondary-container/60 to-primary-fixed/50 p-6 shadow-sm sm:p-8">
+        <p class="font-label-sm font-bold uppercase tracking-wider text-tertiary">Khu quản lý dành riêng cho giáo viên</p>
+        <h1 class="mt-1 font-headline-lg text-headline-lg text-primary">Ước lượng trước khi tính đúng</h1>
+        <p class="mt-2 max-w-4xl text-on-surface-variant">Quản lý phiếu và câu hỏi, giao bài cho lớp, theo dõi kết quả từng bước và tải báo cáo. Khu này chỉ dành cho tài khoản giáo viên.</p>
+        <p id="teacher-estimate-message" class="mt-4 hidden rounded-xl bg-surface-container-lowest px-4 py-3 font-bold" role="status" aria-live="polite"></p>
+      </section>
+
+      <section aria-label="Tổng quan lớp" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm"><p class="text-sm text-on-surface-variant">Học sinh trong lớp</p><p id="te-students" class="mt-1 text-3xl font-extrabold text-primary">—</p></article>
+        <article class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm"><p class="text-sm text-on-surface-variant">Phiếu ước lượng</p><p id="te-sets" class="mt-1 text-3xl font-extrabold text-primary">—</p></article>
+        <article class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm"><p class="text-sm text-on-surface-variant">Lượt giao đã hoàn thành</p><p id="te-completion" class="mt-1 text-3xl font-extrabold text-primary">—</p></article>
+        <article class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm"><p class="text-sm text-on-surface-variant">Điểm cao nhất của lớp</p><p id="te-best" class="mt-1 text-3xl font-extrabold text-primary">—</p></article>
+      </section>
+
+      <section class="grid gap-6 xl:grid-cols-2">
+        <article class="rounded-3xl bg-surface-container-lowest p-6 shadow-sm">
+          <h2 class="font-headline-md text-headline-md text-primary">1. Tạo phiếu ước lượng</h2>
+          <p class="mt-1 text-sm text-on-surface-variant">Tạo bộ đề riêng để thêm câu hỏi estimate, không trộn với type bài tập khác.</p>
+          <form id="te-set-form" class="mt-4 grid gap-3 sm:grid-cols-2">
+            <label class="text-sm font-bold">Mã phiếu<input name="id" required maxlength="60" pattern="[a-zA-Z0-9-]+" placeholder="phieu-uoc-luong-moi" class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3" /></label>
+            <label class="text-sm font-bold">Tên phiếu<input name="title" required maxlength="120" placeholder="Ước lượng phép nhân" class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3" /></label>
+            <label class="text-sm font-bold sm:col-span-2">Gắn với bài học<select name="lessonId" id="te-lesson-select" required class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3"><option value="">Đang tải bài học…</option></select></label>
+            <button class="min-h-12 rounded-xl bg-primary px-5 font-bold text-on-primary hover:bg-primary-container sm:col-span-2" type="submit">Tạo phiếu</button>
+          </form>
+          <p id="te-set-message" class="mt-3 text-sm" aria-live="polite"></p>
+          <div id="te-set-list" class="mt-4 space-y-2"></div>
+        </article>
+
+        <article class="rounded-3xl bg-surface-container-lowest p-6 shadow-sm">
+          <h2 class="font-headline-md text-headline-md text-primary">2. Quản lý câu hỏi</h2>
+          <label class="mt-3 block text-sm font-bold">Chọn phiếu<select id="te-question-set" class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3"><option value="">Chưa có phiếu estimate</option></select></label>
+          <form id="te-question-form" class="mt-4 grid gap-3 sm:grid-cols-3">
+            <label class="text-sm font-bold sm:col-span-3">Phép tính<input name="prompt" required placeholder="Ví dụ: 19 × 6 = ? hoặc 78 : 6 = ?" class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3" /></label>
+            <label class="text-sm font-bold">Điểm<input name="points" type="number" min="1" max="100" value="10" required class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3" /></label>
+            <label class="text-sm font-bold sm:col-span-2">Chủ đề<input name="category" value="Ước lượng trước khi tính" maxlength="120" class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3" /></label>
+            <div class="flex flex-wrap gap-2 sm:col-span-3"><button id="te-question-save" class="min-h-12 rounded-xl bg-primary px-5 font-bold text-on-primary" type="submit">Thêm câu hỏi</button><button id="te-question-cancel" class="hidden min-h-12 rounded-xl bg-surface-container px-5 font-bold" type="button">Hủy sửa</button></div>
+          </form>
+          <p id="te-question-message" class="mt-3 text-sm" aria-live="polite"></p>
+          <div id="te-question-list" class="mt-4 space-y-2"></div>
+        </article>
+      </section>
+
+      <section class="grid gap-6 xl:grid-cols-2">
+        <article class="rounded-3xl bg-surface-container-lowest p-6 shadow-sm">
+          <h2 class="font-headline-md text-headline-md text-primary">3. Giao phiếu cho lớp</h2>
+          <p class="mt-1 text-sm text-on-surface-variant">Phiếu sẽ giao cho lớp gắn với tài khoản giáo viên.</p>
+          <form id="te-assignment-form" class="mt-4 grid gap-3 sm:grid-cols-2">
+            <label class="text-sm font-bold sm:col-span-2">Phiếu<select name="setId" id="te-assignment-set" required class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3"><option value="">Chưa có phiếu</option></select></label>
+            <label class="text-sm font-bold">Lớp<input id="te-class-name" readonly class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface-container-low px-3" /></label>
+            <label class="text-sm font-bold">Hạn nộp<input name="dueDate" type="date" class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3" /></label>
+            <label class="text-sm font-bold sm:col-span-2">Ghi chú hướng dẫn<input name="note" maxlength="500" placeholder="Ví dụ: Nhớ làm tròn trước khi tính" class="mt-1 h-12 w-full rounded-xl border border-outline-variant bg-surface px-3" /></label>
+            <button class="min-h-12 rounded-xl bg-primary px-5 font-bold text-on-primary sm:col-span-2" type="submit">Giao phiếu</button>
+          </form>
+          <p id="te-assignment-message" class="mt-3 text-sm" aria-live="polite"></p>
+          <div id="te-assignment-list" class="mt-4 space-y-2"></div>
+        </article>
+
+        <article id="teacher-guide" class="rounded-3xl bg-surface-container-lowest p-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div><h2 class="font-headline-md text-headline-md text-primary">4. Theo dõi và báo cáo</h2><p class="mt-1 text-sm text-on-surface-variant">Xem điểm cao nhất và mở lịch sử từng lần nộp để biết học sinh sai câu nào.</p></div>
+            <button id="te-export" class="min-h-12 rounded-xl bg-secondary-container px-5 font-bold text-on-secondary-container">Tải báo cáo CSV</button>
+          </div>
+          <div id="te-student-list" class="mt-4 overflow-x-auto"></div>
+          <div id="te-attempt-history" class="mt-5" aria-live="polite"></div>
+        </article>
+      </section>
+      <p class="pb-4 text-center text-sm text-on-surface-variant">Khu quản lý giáo viên riêng • Học sinh tiếp tục dùng khu luyện tập của các em.</p>
+    </div>
+  </main>
+  <script src="assets/js/core/api.js"></script>
+  <script src="assets/js/components/sidebar.js"></script>
+  <script src="assets/js/components/navbar.js"></script>
+  <script src="assets/js/components/footer.js"></script>
+  <script src="assets/js/core/app.js"></script>
+  <script src="assets/js/pages/estimate-teacher.js"></script>
+</body>
+</html>

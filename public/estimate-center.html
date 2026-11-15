@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Khu luyện tập Ước lượng — Vườn Toán Lớp 3</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;1,6..12,400&amp;family=Quicksand:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="assets/css/tailwind.build.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/tailwind.config.js"></script>
+<link href="assets/css/app.css" rel="stylesheet"/>
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen" data-page="estimate-center">
+<aside id="app-sidebar"></aside>
+<main class="min-h-screen bg-background px-4 pb-12 pt-10 md:pl-24 lg:pl-28">
+  <section class="mx-auto max-w-5xl">
+    <a href="muc-luc.html" class="inline-flex items-center gap-2 rounded-xl px-3 py-2 font-bold text-primary hover:bg-surface-container focus:outline-none focus:ring-4 focus:ring-primary-fixed">
+      <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Về Mục lục Toán 3
+    </a>
+    <div class="mt-4 rounded-3xl bg-surface-container-lowest p-6 shadow-[0_10px_30px_rgba(0,97,39,0.08)] sm:p-9">
+      <div class="flex items-start gap-4">
+        <span class="material-symbols-outlined rounded-2xl bg-secondary-container p-3 text-4xl text-primary" aria-hidden="true">calculate</span>
+        <div>
+          <p class="font-label-sm font-bold uppercase tracking-wider text-tertiary">Góc học tập riêng</p>
+          <h1 class="mt-1 font-headline-lg text-headline-lg text-primary">Khu luyện tập Ước lượng</h1>
+          <p class="mt-2 max-w-3xl font-body-md text-on-surface-variant">Chọn phiếu để luyện nhẩm phép nhân và phép chia. Sau khi nộp, em xem điểm, câu làm đúng, câu cần luyện thêm và lời nhận xét ngay trên màn hình.</p>
+        </div>
+      </div>
+
+      <article class="mt-7 rounded-3xl border-2 border-secondary/40 bg-secondary-container/30 p-5 sm:p-7">
+        <p class="font-label-sm font-bold text-tertiary">PHIẾU LUYỆN TẬP • 12 CÂU</p>
+        <h2 class="mt-1 font-headline-md text-headline-md text-primary">Ước lượng kết quả trước khi tính đúng</h2>
+        <p class="mt-2 font-body-md">Luyện các bảng nhân, chia và phép tính với số có hai chữ số. Với câu nhân hai chữ số, phiếu có hai ô riêng để ghi giá trị trước và sau khi làm tròn.</p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href="estimate.html?set=phieu-uoc-luong-nhan-chia" class="inline-flex min-h-14 items-center gap-2 rounded-2xl bg-primary px-6 py-3 font-bold text-on-primary shadow-[0_4px_0_0_#005320] hover:bg-primary-container focus:outline-none focus:ring-4 focus:ring-primary-fixed">
+            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span> Bắt đầu luyện tập
+          </a>
+          <a href="estimate-guide.html" class="inline-flex min-h-14 items-center gap-2 rounded-2xl bg-surface-container px-5 py-3 font-bold text-primary hover:bg-surface-container-high focus:outline-none focus:ring-4 focus:ring-primary-fixed">
+            <span class="material-symbols-outlined" aria-hidden="true">menu_book</span> Xem hướng dẫn
+          </a>
+        </div>
+      </article>
+      <p class="mt-5 rounded-2xl bg-surface-container-low p-4 font-body-sm text-on-surface-variant">Kết quả từng câu sẽ hiện sau khi em chọn <strong>Nộp bài &amp; Chấm điểm</strong>. Điểm và lời nhận xét được lưu vào hồ sơ luyện tập.</p>
+    </div>
+  </section>
+</main>
+<script src="assets/js/core/api.js"></script>
+<script src="assets/js/components/sidebar.js"></script>
+<script src="assets/js/components/navbar.js"></script>
+<script src="assets/js/components/footer.js"></script>
+<script src="assets/js/core/app.js"></script>
+<script src="assets/js/components/estimate-entry.js"></script>
+</body>
+</html>

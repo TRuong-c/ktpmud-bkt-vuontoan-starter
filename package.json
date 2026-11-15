@@ -8,7 +8,10 @@
     "start": "node server/index.js",
     "dev": "node server/index.js",
     "reset-db": "node -e \"require('fs').rmSync('data/vuon-toan.db',{force:true}); console.log('Da xoa DB, chay npm start de tao lai')\"",
-    "build:css": "node tools/build-css.js"
+    "reinstall": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/reinstall.ps1", 
+    "build:css": "node tools/build-css.js",
+    "test": "node --test tests/estimate.rules.test.js tests/estimate.api.test.js tests/estimate.ui.test.js"
+
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
