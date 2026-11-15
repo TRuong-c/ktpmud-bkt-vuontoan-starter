@@ -1,92 +1,163 @@
 ---
-title: "Báo cáo Kết quả Kiểm thử (TEST_REPORT.md) — Track B: Vườn Toán Lớp 3"
+title: "Báo cáo Kết quả Kiểm thử — Track B: Vườn Toán Lớp 3"
 document_id: "KTPMUD-2026-TRACKB-TEST-REPORT"
-version: "1.0.1-draft"
+version: "1.2.0-local-verified"
 date: "2026-11-15"
 track: "Track B — Vườn Toán Lớp 3 (hoang_mai_toan)"
-repository: "ktpmud-bkt-vuontoan-starter"
-status: "DRAFT_TEMPLATE — kết quả chạy thật chưa được nhóm xác nhận"
+group: "29"
+repository: "https://github.com/TRuong-c/ktpmud-bkt-vuontoan-starter"
+working_branch: "track-b-main"
+status: "LOCAL_TEST_PASS_31_OF_31; CI_NOT_VERIFIED; COMMIT_SHA_NOT_CAPTURED"
 ---
 
 # BÁO CÁO KẾT QUẢ KIỂM THỬ (TEST_REPORT.md)
-**Dự án:** Vườn Toán Lớp 3 — Mở rộng dạng bài *"Ước lượng kết quả trước khi tính đúng"* (Track B)
+
+**Dự án:** Vườn Toán Lớp 3 — Thêm dạng bài *“Ước lượng kết quả trước khi tính đúng”*  
+**Nhóm:** 29 · **Track:** B  
+**Ngày kiểm thử được chứng minh:** 15/11/2026
 
 > [!IMPORTANT]
-> **Ghi chú tuân thủ quy chế thi (Cập nhật sau nhận xét Checkpoint 1):**
-> Tại mốc **Checkpoint 1 (M1 — Understand)**, nhóm đã soạn tài liệu phân tích yêu cầu (`REQUIREMENTS.md`), quyết định kiến trúc (`DECISIONS.md`) và lập ma trận kế hoạch kiểm thử (`TEST_PLAN.md`). Mã nguồn tính năng, lệnh `npm test` và GitHub Actions CI thuộc giai đoạn **M2 — Build (09–15/11/2026)** và **M3 — Harden (16–19/11/2026)**. Trước khi nộp, nhóm cần cập nhật mục này theo tình trạng thực tế của commit được báo cáo; không suy diễn trạng thái chỉ từ kế hoạch.
-> 
-> Báo cáo này được thiết lập ở **DẠNG KHUNG CHUẨN (Skeleton/Template)**. Mọi kết quả kiểm thử thực tế (kết quả pass/fail, nhật ký chạy lệnh, thông tin môi trường thật và link CI Run) sẽ được đo đạc và điền vào sau khi chạy thực tế trong giai đoạn M2 và M3, tuyệt đối không ghi kết quả giả định.
+> **Phân biệt bằng chứng:** Nhóm đã cung cấp ảnh Terminal thể hiện lần chạy **31 tests, 31 pass, 0 fail, 0 skipped** trên máy local ngày 15/11/2026 (Node.js v22.23.4). Đây là kết quả *đã quan sát được*, không phải kết quả giả định. Không suy diễn rằng GitHub Actions/CI đã xanh, rằng ứng dụng đã được kiểm thử thủ công toàn diện, hoặc rằng thành viên khác đã chạy thêm các lượt test. Những mục chưa có bằng chứng được ghi đúng là **chưa xác minh**, không tự điền số liệu hoặc SHA.
+>
+> Báo cáo này **thay thế các số liệu giả** từng xuất hiện ở bản Checkpoint 1 (như “14 Passed” và “CI xanh 100%”). Bản kế hoạch `TEST_PLAN.md` và bảng test từng ghi ở báo cáo draft không được xem là kết quả chạy thực tế.
 
 ---
 
-## 1. Môi trường Thực thi Thử nghiệm (Sẽ điền thông số thật ở M2)
+## 1. Môi trường thực thi thử nghiệm
 
-| Thông số môi trường | Giá trị dự kiến / Cấu hình mục tiêu | Giá trị ghi nhận thực tế (Cập nhật ở M2) |
-| :--- | :--- | :--- |
-| **Hệ điều hành kiểm thử** | Windows 11 / Ubuntu 22.04 LTS (CI) | *[Chờ ghi nhận]* |
-| **Phiên bản Node.js** | Node.js `v20.x LTS` hoặc `v22.x LTS` | *[Chờ ghi nhận: `node -v`]* |
-| **Phiên bản npm** | npm `10.x+` | *[Chờ ghi nhận: `npm -v`]* |
-| **Test Runner** | `node:test` + `node:assert/strict` (Native) | *[Chờ ghi nhận]* |
-| **Cơ chế cô lập CSDL** | SQLite tạm thời qua biến môi trường `DB_PATH` | *[Chờ ghi nhận]* |
-| **Commit SHA kiểm thử** | Commit hash trên nhánh làm việc | *[Chờ ghi nhận]* |
-| **Thời gian thực thi** | Ngày/giờ chạy test | *[Chờ ghi nhận]* |
+| Thông số | Ghi nhận từ bằng chứng ngày 15/11/2026 |
+| :--- | :--- |
+| Hệ điều hành/Terminal | Windows, PowerShell trong VS Code; phiên bản Windows cụ thể **chưa xác minh** |
+| Node.js thực thi thành công | **v22.23.4** (đã hiển thị khi chạy `node -v`) |
+| npm | Thực thi qua **`npm.cmd`**; phiên bản npm cụ thể **chưa xác minh** |
+| Trình chạy test | Node.js built-in test runner: `node --test` |
+| Ba file test trong script | `tests/estimate.rules.test.js`, `tests/estimate.api.test.js`, `tests/estimate.ui.test.js` |
+| Database / dependency | SQLite qua `better-sqlite3`; quá trình test có log nạp `data/seed.json` |
+| Thư mục dự án trên máy kiểm thử | `D:\Visualcode\BKT\ktpmud-bkt-vuontoan-starter` |
+| Nhánh đang dùng trong VS Code | `track-b-main` trong các ảnh trước đó; **chưa có `git status`/SHA tại đúng lần test** |
+| Commit SHA tương ứng với lượt test | **Chưa xác minh** — không dùng SHA PC-1 để thay thế |
+| Ngày chạy | 15/11/2026, theo ảnh chụp do nhóm cung cấp |
+| Tổng thời gian chạy bộ test | **6022.8436 ms** (khoảng 6,02 giây) |
+
+**Lịch sử xử lý lỗi môi trường:** Một lần chạy trước trên Node.js **v24.21.0** bị lỗi ABI của native module `better-sqlite3` (`NODE_MODULE_VERSION 127` so với `137`, `ERR_DLOPEN_FAILED`), nên hai tập test API/UI không chạy thành công. Sau khi chuyển phiên PowerShell sang **Node.js v22.23.4** trong thư mục Node 22 được giải nén, sử dụng `npm.cmd` thay vì `npm.ps1` (do PowerShell Execution Policy), nhóm đã cài dependency và chạy lại thành công 31 test. Đây là lỗi môi trường đã xử lý cho **lần chạy local được ghi nhận**, không kết luận mọi môi trường đã tương thích.
 
 ---
 
-## 2. Lệnh Thực thi Kiểm thử Dự kiến
+## 2. Lệnh thực thi kiểm thử
 
-Theo đúng quyết định kiến trúc tại `DECISIONS.md` (ADR-005) và kế hoạch kiểm thử tại `TEST_PLAN.md`:
+Các lệnh đã được ghi nhận qua ảnh Terminal:
 
-```bash
-# 1. Cài đặt phụ thuộc sạch từ package-lock.json
-npm ci
+```powershell
+node -v
+# v22.23.4
 
-# 2. Chạy toàn bộ các bộ kiểm thử tự động
-npm test
+npm.cmd ci
+npm.cmd test
 ```
 
----
-
-## 3. Khung Tổng hợp Kết quả Kiểm thử (Execution Summary Template)
-
-*(Đây là số lượng **ca kiểm thử theo kế hoạch**, không phải số test đã triển khai. Các nhóm con Unit: 5 + 7 + 9 = 21; cộng Integration 5 và Regression/Audit 2 = 28. Cần đối chiếu với `TEST_PLAN.md` để bảo đảm không thiếu/trùng ID; số test thực tế lấy từ output `npm test`.)*
-
-| Phân tầng kiểm thử | Tổng số Test Cases | Số Test Đạt (Passed) | Số Test Thất bại (Failed) | Thời gian chạy (ms) | Trạng thái |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Tầng 1: Unit Tests (Hàm chấm tất định)** | 21 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| • Normal Cases (`TC-NORM-01..05`) | 5 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| • Boundary Cases (`TC-BND-01..07`) | 7 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| • Invalid Input Cases (`TC-INV-01..09`) | 9 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| **Tầng 2: Integration Tests (API + DB SQLite)** | 5 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| • Fixture Seed (`TC-SEED-01`) | 1 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| • Bảo mật ẩn đáp án (`TC-SEC-01`) | 1 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| • Nộp bài & Lưu DB SQLite (`TC-SUB-01..03`)| 3 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| **Tầng 3: Regression & Audit Tests** | 2 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| • Hồi quy 4 loại câu hỏi cũ (`TC-REG-01`) | 1 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| • Bất biến Auth & Dockerfile (`TC-AUD-01`) | 1 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
-| **TỔNG CỘNG** | **28** | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ **Pending (M2)** |
-
----
-
-## 4. Nhật ký Thực thi Mẫu từ Terminal (Raw Console Output)
-
-*(Dán log từ terminal khi nhóm thực sự chạy `npm test`, kèm commit SHA và thời gian.)*
+Script `test` thực tế in ra Terminal:
 
 ```text
-[Chờ dán log thực tế sau khi chạy `npm test` ở M2]
+> vuon-toan-lop-3@1.0.0 test
+> node --test tests/estimate.rules.test.js tests/estimate.api.test.js tests/estimate.ui.test.js
 ```
 
----
+**Kết quả `npm.cmd ci`:** Cài thành công **173 packages**, audit **174 packages** trong khoảng **3 giây**. npm cảnh báo `prebuild-install@7.1.3` không còn được bảo trì và ghi nhận **2 vulnerabilities (1 moderate, 1 high)**. Chưa có bằng chứng phân tích chi tiết bằng `npm.cmd audit` hoặc khắc phục hai cảnh báo này.
 
-## 5. Kết quả Kiểm thử Tự động trên CI (GitHub Actions Run)
-
-- **Workflow File:** `.github/workflows/ci.yml` (Được cấu hình ở M3)
-- **Link Run trên GitHub Actions:** *[Sẽ cập nhật URL thật của GitHub Actions Run sau khi hoàn thiện CI]*
-- **Trạng thái Build:** ⏳ *Chờ cấu hình ở M3*
+**Dữ liệu kiểm thử:** Log có thông báo `[DB] Đã nạp dữ liệu mẫu từ data/seed.json`. Các cảnh báo `[Google Auth] GOOGLE_CLIENT_ID chưa được cấu hình` và `[Admin] ADMIN_SECRET chưa được cấu hình` xuất hiện trong môi trường test; bộ test tiếp tục chạy nhưng không chứng minh các chức năng Google OAuth/quản trị hoạt động với cấu hình triển khai đầy đủ.
 
 ---
 
-## 6. Giới hạn & Các vấn đề còn tồn đọng (Known Issues & Limitations)
+## 3. Tổng hợp kết quả kiểm thử (Execution Summary)
 
-*(Sẽ ghi nhận các trường hợp biên hoặc hạn chế phát hiện trong quá trình kiểm thử thực tế ở M2 và M3).*
-- Tình trạng cần nhóm xác nhận trước khi commit: đã có code tính năng `estimate` hay chưa, `npm test` có chạy được không, CI nào đã chạy, lỗi hiện còn gì. Không giữ dòng này ở dạng mô tả M1 nếu code đã được triển khai.
+### 3.1. Kết quả thực tế — local automated tests
+
+| Chỉ số | Kết quả |
+| :--- | ---: |
+| **Tổng số bài kiểm thử Node thực thi** | **31** |
+| **Passed** | **31** |
+| **Failed** | **0** |
+| Cancelled | 0 |
+| Skipped | 0 |
+| Todo | 0 |
+| Suites (theo Node test runner) | 0 |
+| **Duration** | **6022.8436 ms** |
+| **Đánh giá lần chạy local này** | **PASS** |
+
+### 3.2. Các phạm vi test có dấu ✓ trong ảnh Terminal
+
+| Nhóm chức năng / tiêu chí liên quan | Các trường hợp có bằng chứng chạy thành công (tóm tắt từ ảnh) | Mức độ xác minh |
+| :--- | :--- | :--- |
+| **Tạo/chấm ước lượng (B-02, B-03, B-08)** | `computeParams` cho ba loại câu theo ADR-002; kiểm tra từ chối đầu vào sai; `TC-SEED` với **12 fixture**; normal/boundary (bao gồm cận và khoảng `110–120`); invalid dạng chuỗi/biểu thức; ma trận bốn trạng thái điểm; ví dụ nhân số hai chữ số và chia `78 : 6`; `parseAnswer` từ chối định dạng không hợp lệ. | Automated tests local: PASS |
+| **API, quyền truy cập và bảo mật đáp án (B-01, B-04, B-05)** | `B-01`: dạng estimate có trong API lessons hiện có; `TC-SEC-01`: GET câu hỏi không lộ đáp án; HTTP 401 trước đăng nhập; 404 cho bộ không tồn tại; `TC-SUB-01/02/03`: chấm/lưu, giữ trạng thái và chống gửi trùng. | Automated tests local: PASS |
+| **Điểm số và tương thích (B-05, B-06, B-07)** | `TC-SCORE-06`: `scorePercent`/`correctCount` trên bộ hỗn hợp; dữ liệu đầu vào sai được xử lý; `TC-REG-01`: câu hỏi cũ tiếp tục được chấm theo cơ chế cũ; `TC-AUD-01`: tài khoản mẫu/role; `B-07`: test kiểm tra không sửa các file bị cấm. | Automated tests local: PASS; không thay thế review diff toàn bộ |
+| **Giao diện và điều hướng (B-01, B-12)** | Trang estimate có hai bước; hướng dẫn, liên kết điều hướng và thông báo lỗi; JavaScript nhắc lỗi khi chưa nhập đáp án; route theo vai trò; các trang quen thuộc HTTP vẫn hoạt động; đường dẫn `lesson.html?set=phieu-uoc-luong...` mở được theo bài kiểm thử. | Automated tests local: PASS; **chưa xác minh thao tác tay đầy đủ bằng bàn phím** |
+
+**Quy tắc phân loại số lượng:** Báo cáo `TEST_REPORT.md` cũ là *kế hoạch* và có tổng chưa nhất quán (Unit 16 nhưng Normal 5 + Boundary 7 + Invalid 9 = 21; toàn bảng ghi 32). **31** ở đây là số test Node **thực sự chạy**, không tự động tương đương 31 test case ID trong `TEST_PLAN.md`. Không phân bổ tùy tiện 31 thành từng nhóm Unit/Integration/Regression nếu chưa đối chiếu toàn bộ tên test và file nguồn.
+
+**Các lượt chạy khác:** Chưa có log, commit hoặc link CI đủ để xác nhận những lượt test riêng của các thành viên khác. Báo cáo không phủ nhận việc họ có thể đã test; chỉ không đưa lượt chưa có bằng chứng thành kết quả xác nhận.
+
+---
+
+## 4. Nhật ký thực thi từ Terminal (Raw Console Output)
+
+**Trích chính xác phần tổng kết thể hiện trong ảnh Terminal gửi ngày 15/11/2026:**
+
+```text
+> vuon-toan-lop-3@1.0.0 test
+> node --test tests/estimate.rules.test.js tests/estimate.api.test.js tests/estimate.ui.test.js
+
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6022.8436
+```
+
+Đây là **trích xuất từ ảnh màn hình**, không phải toàn bộ stdout lưu tại file. Bằng chứng của lần chạy này đã được trưởng nhóm cung cấp trong hội thoại ngày 15/11/2026, bao gồm ảnh cài đặt `npm.cmd ci`, danh sách test ✓ và bảng tổng kết. **Chưa có liên kết bằng chứng GitHub công khai gắn với SHA xác định** trong các nguồn đã kiểm tra được.
+
+Để tăng khả năng tái lập từ clean checkout, có thể lưu log của **lần chạy mới** cùng SHA tương ứng, sau khi kiểm tra không chứa secrets/PII. Không gán log mới cho thời điểm hoặc commit của lần chạy trước.
+
+---
+
+## 5. Kết quả kiểm thử tự động trên CI (GitHub Actions Run)
+
+| Nội dung | Tình trạng kiểm chứng đến 15/11/2026 |
+| :--- | :--- |
+| Workflow ở `.github/workflows/` | Có thư mục `.github/` trong dự án theo ảnh VS Code; **chưa xác minh được tên và nội dung workflow** |
+| GitHub Actions run URL | **Chưa xác minh được** |
+| Commit SHA của CI run | **Chưa xác minh được** |
+| Kết quả CI `npm ci && npm test` | **Chưa xác minh** — không báo cáo CI xanh |
+| Check `validate` trên PR nộp bài | Thuộc repo `ktpmud-project`, **chưa xác minh**; khác với test CI của code |
+
+**Kết luận về B-09/B-10:** Lần chạy `npm.cmd ci` và `npm.cmd test` thành công trên máy Windows là bằng chứng tích cực cho **B-09 trên môi trường local**. Tiêu chí **B-10 chưa thể đánh dấu đạt** nếu chưa có CI run thực tế trên Pull Request và URL tương ứng.
+
+Nguồn kiểm chứng thêm khi có thể truy cập GitHub: [Actions của fork nhóm 29](https://github.com/TRuong-c/ktpmud-bkt-vuontoan-starter/actions).
+
+---
+
+## 6. Giới hạn, rủi ro và kết luận
+
+### 6.1. Kết quả xác nhận được
+
+- Nhóm đã chạy thành công **31/31 automated tests local**, 0 failed, bằng Node.js **v22.23.4**, sau khi cài dependency thành công.
+- Bằng chứng hiển thị test rules/fixtures, API/SQLite, tính điểm, hồi quy và các route/giao diện.
+- Lần chạy này thay thế phần “chưa chạy” trong báo cáo bản M1 và **không hợp thức hóa các số liệu giả trước đây**.
+
+### 6.2. Rủi ro và những điều chưa được chứng minh
+
+1. **Commit source của lần test:** Chưa ghi được SHA và `git status` tại thời điểm chạy, nên chưa thể khẳng định chính snapshot đã được đẩy lên fork GitHub. Đặc biệt không dùng commit SHA PC-1 cũ làm SHA kiểm thử ngày 15/11.
+2. **CI và clean checkout độc lập:** Chưa có link Actions xanh trên PR; dù `npm.cmd ci` thành công ở local, kết quả chưa chứng minh chạy được trong CI sạch trên hệ điều hành khác.
+3. **An toàn dependency:** `npm.cmd ci` phát hiện 2 vulnerabilities (1 moderate, 1 high). Chưa có kết luận mức độ ảnh hưởng thực tế; cần phân tích qua `npm.cmd audit`, không tự chạy `npm audit fix --force`.
+4. **Cấu hình OAuth/Admin:** Bộ test chạy khi các biến `GOOGLE_CLIENT_ID` và `ADMIN_SECRET` chưa cấu hình; không coi đây là kiểm thử đầy đủ cho đăng nhập Google hoặc luồng Admin thật.
+5. **Kiểm thử thao tác tay và tính tiếp cận:** Cần demo end-to-end trên trình duyệt: từ bài học cũ → hai bước → server chấm → lưu DB → refresh giữ điểm; đồng thời thử bàn phím, thông báo lỗi và không lộ đáp án trước submit.
+6. **Test bởi các thành viên khác:** Chưa có báo cáo/log/commit xác thực độc lập ở những tài liệu đang truy cập được. Kết quả đó có thể được bổ sung bằng chứng sau nếu nhóm đã thực hiện, nhưng không khai là đã xác minh.
+
+### 6.3. Kết luận
+
+**Tại ngày 15/11/2026, nhóm 29 có bằng chứng chắc chắn cho kết quả `LOCAL TEST: 31 PASS / 0 FAIL` trên Node.js 22.23.4.** Đây là tiến bộ thực tế phục vụ Checkpoint 2. Báo cáo **không khẳng định CI xanh, đã test thủ công đầy đủ, hay hoàn thành mọi tiêu chí B-01–B-12** khi chưa có bằng chứng.
+
+**Tài liệu căn cứ:** `REQUIREMENTS.md`, `DECISIONS.md`, `TEST_PLAN.md` của nhóm; ảnh chạy test local được cung cấp ngày 15/11/2026; đề thi chính thức Hack Marathon 2026 (§6, §8.3); trang Progress Check v1.0.6. Nhận xét Checkpoint 1 để theo dõi tại [PR #1 của Track B](https://github.com/fossbk-spec/ktpmud-bkt-vuontoan-starter/pull/1). Các URL GitHub không truy xuất được đầy đủ trong lượt lập báo cáo này, nên không dùng chúng để tự xác nhận trạng thái CI/commit/thành viên.
