@@ -1,73 +1,92 @@
 ---
-title: "Báo cáo Sử dụng Công cụ Trí tuệ Nhân tạo (AI_USE.md) — Track B: Vườn Toán Lớp 3"
-document_id: "KTPMUD-2026-TRACKB-AI-USE"
-version: "1.0.1-review"
+title: "Báo cáo Kết quả Kiểm thử (TEST_REPORT.md) — Track B: Vườn Toán Lớp 3"
+document_id: "KTPMUD-2026-TRACKB-TEST-REPORT"
+version: "1.0.1-draft"
 date: "2026-11-15"
 track: "Track B — Vườn Toán Lớp 3 (hoang_mai_toan)"
 repository: "ktpmud-bkt-vuontoan-starter"
+status: "DRAFT_TEMPLATE — kết quả chạy thật chưa được nhóm xác nhận"
 ---
 
-# BÁO CÁO SỬ DỤNG CÔNG CỤ TRÍ TUỆ NHÂN TẠO (AI_USE.md)
-**Dự án:** Vườn Toán Lớp 3 — Thêm dạng bài *"Ước lượng kết quả trước khi tính đúng"* (Track B)
+# BÁO CÁO KẾT QUẢ KIỂM THỬ (TEST_REPORT.md)
+**Dự án:** Vườn Toán Lớp 3 — Mở rộng dạng bài *"Ước lượng kết quả trước khi tính đúng"* (Track B)
 
-> Tài liệu này tuân thủ quy định về liêm chính học thuật và chính sách sử dụng AI của môn học Kỹ thuật Phần mềm Ứng dụng (KTPMUD Hack Marathon 2026 — Mục 6 & Mục 11). Nhóm cam kết công khai, minh bạch toàn bộ các công cụ trợ lý AI đã sử dụng, mục đích, kết quả thu được, các sai lệch phát sinh ban đầu và quá trình rà soát, kiểm chứng của các thành viên trong nhóm.
-
----
-
-## 1. Danh sách Công cụ AI Sử dụng
-
-1. **Công cụ chính theo khai báo ban đầu:** Google Antigravity (Gemini 2.5 Pro / Flash — nhóm xác nhận model nào thực tế đã dùng).
-2. **Môi trường sử dụng:** Trợ lý lập trình AI hỗ trợ trực tiếp trong môi trường IDE/Terminal phát triển cục bộ.
-
----
-
-## 2. Nhật ký & Mục đích Sử dụng AI theo Từng Giai đoạn
-
-| Giai đoạn | Mục đích sử dụng AI | Câu lệnh / Prompt chính | Kết quả do AI sinh ra | Mức độ can thiệp & Đóng góp |
-| :--- | :--- | :--- | :--- | :--- |
-| **M1 — Phân tích Yêu cầu** | Hỗ trợ đọc đề bài, tóm tắt các ràng buộc B-01 đến B-12 và lập dàn ý tài liệu `REQUIREMENTS.md`. | *"Hãy phân tích đề bài Track B Vườn toán lớp 3 và lập dàn ý đặc tả các yêu cầu B-01 đến B-12..."* | Bản thảo dàn ý tài liệu đặc tả, danh mục các bảng yêu cầu Given/When/Then. | AI hỗ trợ soạn khung (draft); nhóm rà soát và tinh chỉnh nội dung nghiệp vụ. |
-| **M1 — Vẽ Sơ đồ Hệ thống** | Hỗ trợ sinh mã sơ đồ Use Case và Activity theo định dạng XML Draw.io và mã vector SVG. | *"Vẽ sơ đồ use case và activity dạng 2 cột theo phong cách Đại học Bách Khoa cho học sinh và giáo viên..."* | Mã nguồn 4 sơ đồ Use Case và Activity Swimlane 2 cột (`docs/*.svg`). | AI sinh mã vector SVG; nhóm rà soát luồng nghiệp vụ trên Draw.io. |
-| **M1 — Lập Kế hoạch Kiểm thử & ADR** | Hỗ trợ phác thảo các quyết định kiến trúc (`DECISIONS.md`) và ma trận test case (`TEST_PLAN.md`). | *"Thiết kế ma trận test cases cho normal, boundary, invalid input và scoring..."* | Dự thảo 5 ADR và bảng 28 kịch bản test case. | AI hỗ trợ đề xuất ma trận; nhóm thẩm định công thức và logic tính điểm. |
+> [!IMPORTANT]
+> **Ghi chú tuân thủ quy chế thi (Cập nhật sau nhận xét Checkpoint 1):**
+> Tại mốc **Checkpoint 1 (M1 — Understand)**, nhóm đã soạn tài liệu phân tích yêu cầu (`REQUIREMENTS.md`), quyết định kiến trúc (`DECISIONS.md`) và lập ma trận kế hoạch kiểm thử (`TEST_PLAN.md`). Mã nguồn tính năng, lệnh `npm test` và GitHub Actions CI thuộc giai đoạn **M2 — Build (09–15/11/2026)** và **M3 — Harden (16–19/11/2026)**. Trước khi nộp, nhóm cần cập nhật mục này theo tình trạng thực tế của commit được báo cáo; không suy diễn trạng thái chỉ từ kế hoạch.
+> 
+> Báo cáo này được thiết lập ở **DẠNG KHUNG CHUẨN (Skeleton/Template)**. Mọi kết quả kiểm thử thực tế (kết quả pass/fail, nhật ký chạy lệnh, thông tin môi trường thật và link CI Run) sẽ được đo đạc và điền vào sau khi chạy thực tế trong giai đoạn M2 và M3, tuyệt đối không ghi kết quả giả định.
 
 ---
 
-### 2.1. Công cụ AI khác và bằng chứng rà soát (cần đối chiếu trước khi nộp)
+## 1. Môi trường Thực thi Thử nghiệm (Sẽ điền thông số thật ở M2)
 
-Trong quá trình trao đổi về quy trình Github/PC-1, nhóm cũng có sử dụng **ChatGPT** để hướng dẫn thao tác tạo `progress/PROGRESS.md`, đọc quy định, nhận diện bất nhất giữa tài liệu và hỗ trợ rà soát báo cáo. Hãy giữ mục này nếu nhóm thực tế đã sử dụng các gợi ý trong bài; bổ sung những công cụ AI khác (Codex, Copilot, v.v.) nếu đã sử dụng.
-
-| Công cụ | Phạm vi file/module/commit | Kiểm chứng bởi nhóm | Quyết định giữ/sửa/loại | Reviewer alias |
-|---|---|---|---|---|
-| Google Antigravity / Gemini (xác nhận model thực tế) | `REQUIREMENTS.md`, `DECISIONS.md`, `TEST_PLAN.md`, sơ đồ `docs/` nếu có | **CẦN ĐIỀN:** link commit, đối chiếu đề, test hoặc review | **CẦN ĐIỀN:** điều chỉnh nào đã giữ, điều chỉnh nào bỏ và lý do | **CẦN ĐIỀN** |
-| ChatGPT (trao đổi hướng dẫn/rà soát) | `progress/PROGRESS.md`, hướng dẫn GitHub, nhận xét `TEST_REPORT.md` và `AI_USE.md` | **CẦN ĐIỀN:** ai kiểm tra, link commit hoặc file liên quan | **CẦN ĐIỀN:** chỉ nhận gợi ý đã kiểm chứng | **CẦN ĐIỀN** |
-
-Không đưa nguyên prompt riêng tư, secret hoặc thông tin cá nhân vào log. Không ghi AI đã sinh file/module mà nhóm chưa thật sự dùng đầu ra đó.
-
----
-
-## 3. Ghi nhận Sai lệch Ban đầu của AI và Quá trình Sửa chữa của Nhóm (Theo Nhận xét Checkpoint 1)
-
-Trong quá trình nộp bài Checkpoint 1, nhóm nhận được phản hồi về một số lỗi có trong các bản thảo có AI hỗ trợ. Nhóm đã soạn phương án chỉnh sửa dưới đây; trước khi nộp cần đối chiếu từng mục với commit GitHub thực tế:
-
-1. **Lỗi sinh dữ liệu kết quả kiểm thử ảo trong `TEST_REPORT.md`:**
-   - *Hiện tượng:* Trợ lý AI khi sinh file `TEST_REPORT.md` ban đầu đã tự động điền các thông số giả định *"14 Passed, 0 Failed, CI xanh 100%"* mặc dù dự án ở M1 chưa có mã nguồn thực thi hay workflow CI thật.
-   - *Xử lý của nhóm:* Sau nhận xét của GV, nhóm **đã soạn lại bản `TEST_REPORT.md` ở dạng template** và loại bỏ số liệu test/CI không có bằng chứng. **Bản sửa đang chờ upload vào GitHub**; kết quả thực tế chỉ được điền khi có lệnh, log, commit và CI run thật.
-
-2. **Lỗi sinh câu hỏi và quy tắc ngoài phạm vi phép tính (§8.2):**
-   - *Hiện tượng:* AI đã đưa vào một số ví dụ phép cộng/trừ 3 chữ số và làm tròn hàng trăm (như `est-7: 712 - 295`) và công thức dung sai có chữ "hoặc" gây mâu thuẫn với yêu cầu *"trên các phép nhân/chia đã có"*.
-   - *Xử lý của nhóm:* Nhóm đã **sửa bộ 12 câu hỏi được mô tả trong tài liệu** để chỉ còn phép nhân và phép chia (Bảng nhân 6, 7, 8, 9 và nhân/chia số có 2 chữ số thuộc các bài 9, 10, 11, 12, 13, 14, 23, 26 có sẵn trong SGK), đồng thời mô tả công thức toán học tất định cho từng loại câu. **Cần kiểm tra `data/seed.json` và test thực tế trước khi xác nhận tính năng đã triển khai.**
-
-3. **Lỗi không thống nhất tên trường dữ liệu trong các tài liệu:**
-   - *Hiện tượng:* AI dùng không đồng nhất giữa `min_estimate`/`exact_answer` trong ADR và `min`/`max`/`exact` trong Requirements.
-   - *Xử lý của nhóm:* Bản sửa `REQUIREMENTS.md` và `DECISIONS.md` lựa chọn JSON: `{"min":..., "max":..., "exact":..., "canonical":...}`. **Cần xác minh cùng định dạng này trong code và fixture**.
-
----
-
-## 4. Phân công Trách nhiệm & Thẩm định của Thành viên Nhóm
-
-| Thành viên | Vai trò trong nhóm | Nội dung chịu trách nhiệm rà soát & thẩm định độc lập |
+| Thông số môi trường | Giá trị dự kiến / Cấu hình mục tiêu | Giá trị ghi nhận thực tế (Cập nhật ở M2) |
 | :--- | :--- | :--- |
-| **Trưởng nhóm** | Quản lý dự án, Kiến trúc | Thẩm định tính khả thi của 5 Quyết định Kiến trúc trong `DECISIONS.md`, kiểm soát tính bảo mật API (`B-04`) và quy chế phạm vi (`B-07`). |
-| **Thành viên 1** | Phân tích Nghiệp vụ (BA) | Thẩm định logic toán học, kiểm tra 12 fixtures nhân/chia trong `REQUIREMENTS.md` và 4 sơ đồ Use Case/Activity. |
-| **Thành viên 2** | Kiểm thử & QA | Thẩm định ma trận test trong `TEST_PLAN.md`, chịu trách nhiệm chạy test thật và ghi nhận nhật ký vào `TEST_REPORT.md` ở giai đoạn M2. |
+| **Hệ điều hành kiểm thử** | Windows 11 / Ubuntu 22.04 LTS (CI) | *[Chờ ghi nhận]* |
+| **Phiên bản Node.js** | Node.js `v20.x LTS` hoặc `v22.x LTS` | *[Chờ ghi nhận: `node -v`]* |
+| **Phiên bản npm** | npm `10.x+` | *[Chờ ghi nhận: `npm -v`]* |
+| **Test Runner** | `node:test` + `node:assert/strict` (Native) | *[Chờ ghi nhận]* |
+| **Cơ chế cô lập CSDL** | SQLite tạm thời qua biến môi trường `DB_PATH` | *[Chờ ghi nhận]* |
+| **Commit SHA kiểm thử** | Commit hash trên nhánh làm việc | *[Chờ ghi nhận]* |
+| **Thời gian thực thi** | Ngày/giờ chạy test | *[Chờ ghi nhận]* |
 
-> **Cam kết:** Toàn bộ thành viên trong nhóm hiểu rõ mọi nội dung trong tài liệu đã nộp, sẵn sàng trả lời độc lập và giải trình trực tiếp trong các buổi Demo/Viva với Thầy và Trợ giảng.
+---
+
+## 2. Lệnh Thực thi Kiểm thử Dự kiến
+
+Theo đúng quyết định kiến trúc tại `DECISIONS.md` (ADR-005) và kế hoạch kiểm thử tại `TEST_PLAN.md`:
+
+```bash
+# 1. Cài đặt phụ thuộc sạch từ package-lock.json
+npm ci
+
+# 2. Chạy toàn bộ các bộ kiểm thử tự động
+npm test
+```
+
+---
+
+## 3. Khung Tổng hợp Kết quả Kiểm thử (Execution Summary Template)
+
+*(Đây là số lượng **ca kiểm thử theo kế hoạch**, không phải số test đã triển khai. Các nhóm con Unit: 5 + 7 + 9 = 21; cộng Integration 5 và Regression/Audit 2 = 28. Cần đối chiếu với `TEST_PLAN.md` để bảo đảm không thiếu/trùng ID; số test thực tế lấy từ output `npm test`.)*
+
+| Phân tầng kiểm thử | Tổng số Test Cases | Số Test Đạt (Passed) | Số Test Thất bại (Failed) | Thời gian chạy (ms) | Trạng thái |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Tầng 1: Unit Tests (Hàm chấm tất định)** | 21 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| • Normal Cases (`TC-NORM-01..05`) | 5 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| • Boundary Cases (`TC-BND-01..07`) | 7 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| • Invalid Input Cases (`TC-INV-01..09`) | 9 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| **Tầng 2: Integration Tests (API + DB SQLite)** | 5 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| • Fixture Seed (`TC-SEED-01`) | 1 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| • Bảo mật ẩn đáp án (`TC-SEC-01`) | 1 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| • Nộp bài & Lưu DB SQLite (`TC-SUB-01..03`)| 3 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| **Tầng 3: Regression & Audit Tests** | 2 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| • Hồi quy 4 loại câu hỏi cũ (`TC-REG-01`) | 1 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| • Bất biến Auth & Dockerfile (`TC-AUD-01`) | 1 | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ Pending (M2) |
+| **TỔNG CỘNG** | **28** | *[Chờ chạy M2]* | *[Chờ chạy M2]* | *[ms]* | ⏳ **Pending (M2)** |
+
+---
+
+## 4. Nhật ký Thực thi Mẫu từ Terminal (Raw Console Output)
+
+*(Dán log từ terminal khi nhóm thực sự chạy `npm test`, kèm commit SHA và thời gian.)*
+
+```text
+[Chờ dán log thực tế sau khi chạy `npm test` ở M2]
+```
+
+---
+
+## 5. Kết quả Kiểm thử Tự động trên CI (GitHub Actions Run)
+
+- **Workflow File:** `.github/workflows/ci.yml` (Được cấu hình ở M3)
+- **Link Run trên GitHub Actions:** *[Sẽ cập nhật URL thật của GitHub Actions Run sau khi hoàn thiện CI]*
+- **Trạng thái Build:** ⏳ *Chờ cấu hình ở M3*
+
+---
+
+## 6. Giới hạn & Các vấn đề còn tồn đọng (Known Issues & Limitations)
+
+*(Sẽ ghi nhận các trường hợp biên hoặc hạn chế phát hiện trong quá trình kiểm thử thực tế ở M2 và M3).*
+- Tình trạng cần nhóm xác nhận trước khi commit: đã có code tính năng `estimate` hay chưa, `npm test` có chạy được không, CI nào đã chạy, lỗi hiện còn gì. Không giữ dòng này ở dạng mô tả M1 nếu code đã được triển khai.
