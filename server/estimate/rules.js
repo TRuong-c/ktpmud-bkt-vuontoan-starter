@@ -46,9 +46,26 @@ function computeParams(kind, a, b) {
       return { min: Math.min(floor10(p), e), max: Math.max(ceil10(p), e), canonical: e, exact: p };
     }
     case KIND.DIV: {
-      if (a % b !== 0) throw new RangeError(`Phép chia ${a} : ${b} phải chia hết (lớp 3).`);
+      if (a < 10 || a > 99 || b < 6 || b > 9) {
+        throw new RangeError('Ước lượng phép chia chỉ dùng số bị chia có hai chữ số và số chia 6, 7, 8 hoặc 9.');
+      }
+      if (a % b !== 0) throw new RangeError(`Phép chia ${a} : ${b} phải chia hết.`);
       const q = a / b;
-      return { min: Math.max(1, q - 1), max: q + 1, canonical: roundHalfUp(round10(a) / b), exact: q };
+      if (q < 10) throw new RangeError('Thương của phép chia ước lượng phải từ 10 trở lên.');
+      const lowerBenchmark = Math.floor(q / 5) * 5;
+      const upperBenchmark = lowerBenchmark + 5;
+      const lowerDistance = a - b * lowerBenchmark;
+      const upperDistance = b * upperBenchmark - a;
+      const chooseLower = lowerDistance <= upperDistance;
+      const canonical = chooseLower ? lowerBenchmark : upperBenchmark;
+
+      // Một dải duy nhất rộng 3 đơn vị về phía tích mốc gần số bị chia hơn.
+      return {
+        min: chooseLower ? lowerBenchmark : upperBenchmark - 3,
+        max: chooseLower ? lowerBenchmark + 3 : upperBenchmark,
+        canonical,
+        exact: q,
+      };
     }
     default:
       throw new RangeError(`Loại câu ước lượng không hợp lệ: ${kind}`);
@@ -115,13 +132,15 @@ function gradeEstimate(q, given) {
   const estimateMin = parseIntStrict(g.estimateMin);
   const estimateMax = parseIntStrict(g.estimateMax);
   const v = parseIntStrict(g.exact);
-  // Dải học sinh chọn phải nằm trọn trong khoảng hợp lý do công thức tính ra.
+  // Dải học sinh chọn phải nằm trong vùng chấm; với phép chia còn phải chứa thương đúng.
   const prompt = String(q.prompt || '');
   const expr = prompt.match(/(?:^|\s)(\d{2,})\s*[×x]\s*(\d+)\s*=\s*\?/i);
-  const expectedWidth = /[×x]/.test(prompt) ? 10 : 2;
+  const isDivision = /\d\s*[:÷]/.test(prompt);
+  const expectedWidth = /[×x]/.test(prompt) ? 10 : 3;
   const intervalOk = estimateMin !== null && estimateMax !== null
     && estimateMax - estimateMin === expectedWidth
-    && p.min <= estimateMin && estimateMax <= p.max;
+    && p.min <= estimateMin && estimateMax <= p.max
+    && (!isDivision || (estimateMin <= p.exact && p.exact <= estimateMax));
   let estimateOk;
   if (expr) {
     const before = parseIntStrict(g.roundBefore);

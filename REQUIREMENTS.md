@@ -1,8 +1,8 @@
 ---
 title: "Đặc tả Yêu cầu Phần mềm (REQUIREMENTS.md) — Track B: Vườn Toán Lớp 3"
 document_id: "KTPMUD-2026-TRACKB-REQUIREMENTS"
-version: "2.1.0"
-date: "2026-11-09"
+version: "2.2.0"
+date: "2026-11-16"
 track: "Track B — Vườn Toán Lớp 3 (hoang_mai_toan)"
 repository: "ktpmud-bkt-vuontoan-starter"
 ---
@@ -15,7 +15,7 @@ repository: "ktpmud-bkt-vuontoan-starter"
 ## 1. Giới thiệu & Bối cảnh nghiệp vụ (Business Context)
 
 ### 1.1. Hiện trạng hệ thống (Baseline System)
-Ứng dụng web **Vườn Toán Lớp 3 — Trường Tiểu học Hoàng Mai** hiện cung cấp môi trường học tập, luyện tập và kiểm tra môn Toán lớp 3 (Chương trình GDPT 2018) với lộ trình 81 bài học (`data/seed.json`, `data/curriculum.json`). Trong đó, mạch kiến thức trọng tâm đang được triển khai luyện tập sâu là **các bảng nhân, bảng chia (6, 7, 8, 9) và phép nhân/chia số có hai chữ số với số có một chữ số** (từ `bai-9` đến `bai-15`, `bai-23`, `bai-26`).
+Ứng dụng web **Vườn Toán Lớp 3 — Trường Tiểu học Hoàng Mai** cung cấp lộ trình 81 bài học (`data/seed.json`, `data/curriculum.json`). Bảng nhân/chia 6, 7, 8, 9 nằm ở các bài đầu; nhân số có hai chữ số với số có một chữ số ở Bài 23; **chia số có hai chữ số cho số có một chữ số ở Bài 26**. Câu ước lượng chia hai chữ số chỉ được giao khi học sinh đã đến Bài 26, không gắn vào bài học bảng chia trước đó.
 
 Hệ thống hiện có chỉ hỗ trợ **4 loại câu hỏi (`type`)** với cơ chế chấm điểm **1 bước — so khớp chuỗi ký tự tuyệt đối** (`given === correct_answer`):
 - `multiple-choice`: Chọn 1 đáp án trắc nghiệm (`A`, `B`, `C`, `D`).
@@ -27,7 +27,7 @@ Hệ thống hiện có chỉ hỗ trợ **4 loại câu hỏi (`type`)** với 
 Khi học sinh lớp 3 thực hiện các phép nhân và phép chia (đặc biệt là bảng nhân/chia 6, 7, 8, 9 hoặc nhân/chia số có hai chữ số với số có một chữ số), học sinh thường mắc lỗi tính nhầm hàng chục hoặc quên nhớ mà không tự nhận ra kết quả vô lý.
 
 Do đó, hệ thống cần bổ sung dạng luyện tập mới: **"Ước lượng kết quả trước khi tính đúng" (`type = 'estimate'`)** ngay trên các phép nhân/chia đã có:
-1. **Bước 1 (Ước lượng trước):** Học sinh phải đưa ra một số ước lượng (hoặc giá trị nằm trong khoảng hợp lý `[min, max]`) cho tích/thương **trước khi** thực hiện bước tính chính xác.
+1. **Bước 1 (Ước lượng trước):** Học sinh chọn một **dải ước lượng trên tia số** trước khi tính chính xác. Với phép nhân có thừa số hai chữ số, học sinh nhập thêm giá trị trước và sau khi làm tròn. Với phép chia hai chữ số cho một chữ số, học sinh so sánh hai tích mốc dễ nhẩm; không làm tròn số bị chia đến hàng chục rồi chia cho số không chia hết.
 2. **Bước 2 (Tính đúng sau):** Học sinh nhập kết quả tính chính xác (`exact`) của phép nhân/chia đó.
 3. **Phản hồi sư phạm kép (`B-06`):** Sau khi nộp bài, hệ thống chấm điểm tất định trên Server và trả về nhận xét phân biệt rõ ràng giữa việc học sinh *"ước lượng hợp lý"* hay chưa và *"kết quả chính xác"* đúng hay sai.
 
@@ -61,7 +61,7 @@ Do đó, hệ thống cần bổ sung dạng luyện tập mới: **"Ước lư�
 
 ### 3.1. Mô hình câu hỏi 2 bước & Định dạng Mã hóa Đáp án Chuẩn hóa Duy nhất
 Mỗi câu hỏi `type = 'estimate'` đưa ra một phép nhân $A \times B$ hoặc phép chia $A : B$ thuộc chương trình lớp 3. Học sinh thực hiện tuần tự **2 bước**:
-- **Bước 1 — Ước lượng (`estimate` = $u$):** Học sinh nhẩm nhanh xem tích hoặc thương khoảng bao nhiêu (dựa trên quy tắc làm tròn đến hàng chục) và nhập số nguyên $u$ **trước khi** tính chi tiết.
+- **Bước 1 — Ước lượng:** Học sinh kéo một dải trên tia số, gửi hai đầu nguyên `estimateMin` và `estimateMax`. Phép nhân có thừa số hai chữ số còn yêu cầu `roundBefore` và `roundAfter`; phép chia hai chữ số cho một chữ số dùng hai tích mốc dễ nhẩm. Bước này phải hoàn tất **trước khi** nhập kết quả chính xác.
 - **Bước 2 — Tính đúng (`exact` = $v$):** Học sinh tính chính xác kết quả của phép nhân/chia và nhập số nguyên $v$.
 
 > [!IMPORTANT]
@@ -75,16 +75,16 @@ Mỗi câu hỏi `type = 'estimate'` đưa ra một phép nhân $A \times B$ ho�
 >   "exact": 114
 > }
 > ```
-> - `min` (Integer): Cận dưới của khoảng ước lượng hợp lý ($min \le exact \le max$).
-> - `max` (Integer): Cận trên của khoảng ước lượng hợp lý.
-> - `canonical` (Integer): Giá trị ước lượng chuẩn sư phạm (kết quả sau khi làm tròn đến hàng chục).
+> - `min` (Integer): Cận dưới của vùng chứa các dải ước lượng được chấp nhận ($min \le exact \le max$).
+> - `max` (Integer): Cận trên của vùng đó; vùng này có thể rộng hơn chính dải học sinh kéo.
+> - `canonical` (Integer): Mốc ước lượng chuẩn sư phạm; phép nhân dùng kết quả làm tròn đến hàng chục, phép chia dùng thương tại tích mốc gần số bị chia hơn.
 > - `exact` (Integer): Đáp số tính toán chính xác tuyệt đối của phép tính.
 >
 > *(Không sử dụng chuỗi phân cách dạng cũ như "75-85|81" hay các tên biến khác nhau như min_estimate, exact_answer).*
 
 ### 3.2. Công thức xác định tất định bộ tham số `(min, max, canonical, exact)`
 
-Mỗi câu hỏi trong cơ sở dữ liệu được xác định bằng một công thức toán học tất định duy nhất, không dùng hàm ngẫu nhiên hay từ "hoặc":
+Mỗi câu hỏi trong cơ sở dữ liệu được xác định bằng công thức toán học tất định, không dùng hàm ngẫu nhiên. Hai cách chọn dải hợp lý của phép chia được hợp nhất thành một vùng chấm duy nhất `[min, max]` theo công thức bên dưới.
 
 1. **Hàm làm tròn chuẩn đến hàng chục ($\text{round}_{10}$):**
    $$\text{round}_{10}(n) = \left\lfloor \frac{n + 5}{10} \right\rfloor \times 10$$
@@ -92,38 +92,51 @@ Mỗi câu hỏi trong cơ sở dữ liệu được xác định bằng một c
 
 2. **Ba loại bài toán Ước lượng Nhân / Chia trong bộ đề:**
 
-| Loại bài toán (Trên các bài nhân/chia đã có) | Công thức Kết quả đúng (`exact`) | Công thức Ước lượng chuẩn (`canonical`) | Công thức Khoảng hợp lý `[min, max]` duy nhất | Ví dụ minh họa cụ thể |
+| Loại bài toán (Trên các bài nhân/chia đã có) | Công thức Kết quả đúng (`exact`) | Công thức Ước lượng chuẩn (`canonical`) | Công thức Vùng chấm `[min, max]` duy nhất | Ví dụ minh họa cụ thể |
 | :--- | :---: | :---: | :---: | :--- |
 | **Loại 1: Ước lượng tích trong Bảng nhân 6, 7, 8, 9**<br/>*(Bài 9, 11, 13, 14: $a \times b$)* | $P = a \times b$ | $E_{\text{std}} = \text{round}_{10}(P)$ | Kẹp giữa hai mốc tròn chục liên tiếp chứa $P$:<br/>• $min = \lfloor P / 10 \rfloor \times 10$<br/>• $max = \lceil P / 10 \rceil \times 10$ | **$6 \times 7 = ?$**<br/>• `exact` = $42$<br/>• `canonical` = $\text{round}_{10}(42) = 40$<br/>• `[min, max]` = **`[40, 50]`** |
 | **Loại 2: Nhân số có 2 chữ số với số có 1 chữ số**<br/>*(Làm tròn thừa số đến hàng chục — Bài 23: $A \times b$)* | $P = A \times b$ | $E_{\text{std}} = \text{round}_{10}(A) \times b$ | Bao phủ từ mốc chục của $P$ đến tích làm tròn $E_{\text{std}}$:<br/>• $min = \min(\lfloor P/10 \rfloor \times 10,\; E_{\text{std}})$<br/>• $max = \max(\lceil P/10 \rceil \times 10,\; E_{\text{std}})$ | **$19 \times 6 = ?$**<br/>• Làm tròn $19 \approx 20 \Rightarrow E_{\text{std}} = 20 \times 6 = 120$<br/>• `exact` = $114$<br/>• `[min, max]` = **`[110, 120]`** |
-| **Loại 3: Ước lượng thương trong Phép chia cho 6, 7, 8, 9**<br/>*(Bài 10, 12, 13, 14, 26: $A : b$)* | $Q = A : b$ | $E_{\text{std}} = \text{round}\left(\frac{\text{round}_{10}(A)}{b}\right)$ | Khoảng thương lân cận với dung sai cố định $\pm 2$ đơn vị:<br/>• $min = \max(1,\; Q - 2)$<br/>• $max = Q + 2$ | **$78 : 6 = ?$**<br/>• `exact` = $13$<br/>• Làm tròn $78 \approx 80 \Rightarrow E_{\text{std}} = 13$<br/>• `[min, max]` = **`[11, 15]`** |
+| **Loại 3: Chia số có hai chữ số cho 6, 7, 8 hoặc 9**<br/>*(Bài 26; chia hết, thương từ 10 trở lên)* | $Q=A:b$ | Mốc thương ước lượng gần hơn trong hai mốc cách nhau 5; xem quy tắc chi tiết bên dưới. | Một dải duy nhất rộng **3** đơn vị theo mốc gần hơn; `[min,max]` chính là hai đầu dải đó. | **$78:6=?$**: $6\times10=60$, $6\times15=90$; 78 gần 90 hơn. `canonical` = **15**, `exact` = **13**; chỉ chấp nhận **`[12,15]`**. |
+
+#### Quy tắc chi tiết cho phép chia hai chữ số
+
+1. **Đầu vào:** $10 \le A \le 99$, $b\in\{6,7,8,9\}$, $A\bmod b=0$, $Q=A/b\ge10$. Phép chia có dư, thương dưới 10 và số chia có hai chữ số không thuộc dạng này.
+2. **Hai tích mốc:** Server đặt $L=5\lfloor Q/5\rfloor$, $U=L+5$ rồi tính $bL$ và $bU$. Học sinh không được xem $Q$; em tự so sánh số bị chia $A$ với các tích mốc. Nếu $A-bL\le bU-A$, chọn mốc dưới $L$ làm `canonical`; ngược lại chọn mốc trên $U$. Với phép chia hết, không có trường hợp hai khoảng cách bằng nhau giữa hai mốc cách 5.
+3. **Dải theo mốc gần hơn:** Nếu chọn mốc dưới, đặt $min=L$, $max=L+3$; nếu chọn mốc trên, đặt $min=U-3$, $max=U$. Trường hợp $A=bL$ chọn mốc dưới. Dải luôn rộng **3** đơn vị và chứa thương nguyên $Q$.
+4. **Một khoảng chuẩn:** `[min,max]` là chính dải duy nhất học sinh cần kéo, không hợp nhất với dải khác quanh thương đúng. Ví dụ $78:6$ chỉ nhận `[12,15]`; $66:6$ chỉ nhận `[10,13]`.
+
+**Quy tắc chấm riêng cho phép chia:** `estimateOk` chỉ đúng khi `estimateMin`, `estimateMax` là số nguyên, `estimateMax - estimateMin = 3`, `estimateMin = min`, `estimateMax = max` và dải chứa $Q$. Với `78 : 6`, chỉ `[12,15]` được chấp nhận. Tia số có thể ghi các vạch số thông thường, nhưng **không đánh dấu mốc được chọn làm `canonical`**, vùng chấm, thương đúng hay dải gợi ý trước khi học sinh nộp bài.
+
+**Giới hạn bài học:** Chỉ dùng quy tắc này từ **Bài 26**, sau khi học sinh đã học nhân số có hai chữ số với số có một chữ số ở Bài 23. Các phép chia trong bảng có thương dưới 10 vẫn thuộc bài luyện tính đúng, không ép vào dạng kéo dải ước lượng. Phép chia có dư và phép chia cho số có hai chữ số nằm ngoài phạm vi quy tắc này. Chỉ đổi quy tắc cho `type = 'estimate'`; bốn loại câu hỏi cũ giữ nguyên.
 
 ---
 
 ### 3.3. Cơ chế Ép thứ tự "Ước lượng trước" & Xử lý Câu hỏi Bảo vệ
 
-1. **Cơ chế Ép thứ tự tại Giao diện (UI-Enforced Sequence):**
-   - Học sinh khi mở bài tập bắt buộc thực hiện **Bước 1 trước**: Tiêu điểm (focus) nằm tại Ô 1 (Ước lượng).
-   - Ô 2 (Tính đúng) bị tạm khóa (`disabled`). Chỉ khi học sinh nhập một số tự nhiên hợp lệ vào Ô 1 và bấm `Tab` / `Enter` (hoặc rời ô), Ô 2 mới được mở khóa để nhập kết quả tính chính xác.
-   - Khi nộp bài, Client đóng gói toàn bộ cặp câu trả lời `{ estimate: u, exact: v }` gửi lên `POST /api/submissions` trong một lượt duy nhất.
-2. **Xử lý tình huống học sinh nhập kết quả chính xác vào ô ước lượng ($u === exact$):**
-   - *Về mặt điểm số:* Do $exact$ luôn nằm trong khoảng hợp lý $[min, max]$, hệ thống công nhận `estimateOk = true` (không phạt điểm học sinh tính nhẩm giỏi).
-   - *Về mặt phản hồi sư phạm:* Nếu $u === exact$ nhưng $u \ne canonical$, hệ thống bổ sung ghi chú: *"Em đã tính ra luôn kết quả chính xác! Tuy nhiên ở bước ước lượng, em nên làm tròn số đến hàng chục (ví dụ: [canonical]) để rèn phản xạ nhẩm nhanh nhé!"*.
+1. **Cơ chế ép thứ tự tại giao diện (UI-Enforced Sequence):**
+   - Với phép nhân có thừa số hai chữ số, học sinh nhập `roundBefore` và `roundAfter` trước khi kéo dải; với phép nhân bảng hoặc phép chia, học sinh bắt đầu ở tia số. Tia số chỉ có các vạch số và dải kéo, **không tô sẵn vùng đúng**; núm bắt đầu ở đầu trái, không đặt trước vào vị trí đáp án.
+   - Ô kết quả chính xác ban đầu bị khóa (`disabled`). Sau khi học sinh nhập đúng định dạng các giá trị làm tròn (nếu có) và **tự di chuyển** núm để chọn dải, ô mới mở. Giao diện không kiểm tra dải có đúng vùng chấm hay không trước khi nộp.
+   - Khi nộp bài, Client gửi `{ estimateMin, estimateMax, roundBefore?, roundAfter?, exact }` của từng câu trong một lần `POST /api/submissions`.
+2. **Xử lý tình huống học sinh tính ra thương đúng trước khi kéo dải:**
+   - Bước ước lượng không nhận một số đơn lẻ. Học sinh vẫn phải kéo dải đúng độ rộng; hệ thống chấm dải theo điều kiện ở Mục 3.2 và 3.4, không so sánh một ô `estimate` với đáp số chính xác.
+   - Không hiện `canonical`, vùng `[min, max]`, thương đúng hoặc dải gợi ý trước khi nộp. Sau khi nộp, phản hồi có thể giải thích cách so sánh hai tích mốc và nêu dải đã chọn.
 
 ---
 
 ### 3.4. Ma trận 4 Trạng thái Tính điểm & Công thức `score_percent` (B-06)
 
-Khi học sinh nộp cặp $(u, v)$, hệ thống xác thực:
-- `estimateOk = isValidInt(u) && (u >= min && u <= max)`
-- `exactOk = isValidInt(v) && (v === exact)`
+Khi học sinh nộp dải $(s,t)$ và kết quả chính xác $v$, hệ thống xác thực trên Server:
+- `intervalValid = isValidInt(s) && isValidInt(t) && t - s === width && min <= s && t <= max`, trong đó `width = 10` cho phép nhân, `width = 2` cho phép chia hai chữ số.
+- Với phép chia: `estimateOk = intervalValid && s <= exact && exact <= t`.
+- Với phép nhân bảng: `estimateOk = intervalValid`. Với phép nhân có thừa số hai chữ số, còn phải kiểm tra `roundBefore` đúng số ban đầu và `roundAfter` đúng số tròn chục gần nhất.
+- `exactOk = isValidInt(v) && (v === exact)`. Điểm và `correct_count` vẫn theo ma trận 4 trạng thái dưới đây.
 
 | Trạng thái | `estimateOk` | `exactOk` | Điểm nhận được (`earnedPoints`) | Cờ `correct` | Tính vào `correct_count`? | Phản hồi sư phạm (`feedback` B-06) |
 | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
 | **ST-1** | `true` | `true` | **100% điểm câu** ($q.points$) | `true` | **+1** | *"Xuất sắc! Em ước lượng hợp lý (trong khoảng min–max) và tính đúng kết quả chính xác!"* |
 | **ST-2** | `true` | `false` | **50% điểm câu** ($\text{round}(q.points \times 0.5)$) | `false` | **+0** | *"Em ước lượng khoảng rất tốt! Tuy nhiên kết quả tính chính xác còn nhầm, em kiểm tra lại bảng nhân/chia nhé."* |
-| **ST-3** | `false` | `true` | **50% điểm câu** ($\text{round}(q.points \times 0.5)$) | `false` | **+0** | *"Em tính ra kết quả chính xác đúng rồi! Nhưng bước ước lượng ban đầu chưa sát khoảng hợp lý, em nhớ làm tròn số nhé."* |
-| **ST-4** | `false` | `false` | **0% điểm câu** ($0$) | `false` | **+0** | *"Cả số ước lượng và kết quả tính đúng đều chưa chính xác. Em hãy làm tròn số để ước lượng khoảng trước rồi tính lại nhé!"* |
+| **ST-3** | `false` | `true` | **50% điểm câu** ($\text{round}(q.points \times 0.5)$) | `false` | **+0** | *"Em tính đúng rồi! Hãy kiểm tra lại dải ước lượng: phép chia so sánh hai tích mốc, phép nhân dùng số làm tròn phù hợp."* |
+| **ST-4** | `false` | `false` | **0% điểm câu** ($0$) | `false` | **+0** | *"Cả dải ước lượng và kết quả tính đúng đều chưa chính xác. Em thử chọn mốc dễ nhẩm rồi tính lại nhé!"* |
 
 #### Công thức tổng hợp điểm:
 - **Số câu hoàn thành trọn vẹn (`correct_count`):**
@@ -135,15 +148,17 @@ Khi học sinh nộp cặp $(u, v)$, hệ thống xác thực:
 
 ## 4. Đặc tả Use Cases & Sơ đồ Luồng hoạt động (Use Case & Activity Diagrams)
 
+Các sơ đồ SVG đính kèm minh họa luồng tổng quát và cần được cập nhật theo thao tác kéo dải ở Mục 3.3 khi triển khai quy tắc mới. Nếu sơ đồ cũ còn hình ô nhập một số ước lượng, **Mục 3.2–3.4 là đặc tả áp dụng**.
+
 ### 4.1. Sơ đồ Use Case — Tác nhân Học sinh (Lớp 3)
 
 ![Sơ đồ Use Case Học sinh](./docs/usecase-hoc-sinh.svg)
 
 - **Các nhóm thao tác chính của Học sinh:**
   1. **Nhóm thao tác Truy cập bài tập Ước lượng:** Chọn bài học Ước lượng từ Mục lục SGK / Trang chủ (`B-01`), mở phiếu bài tập trên luồng học chính (`lesson.html` / `exercise.html`), tải danh sách câu hỏi an toàn ẩn đáp án đúng (`B-04`).
-  2. **Nhóm thao tác Thực hiện Ước lượng & Tính đúng:** Xem đề bài & gợi ý làm tròn, nhập Bước 1 (Số Ước lượng) trước, nhập Bước 2 (Kết quả tính đúng) sau, hoặc làm mới (Reset) các ô nhập.
+  2. **Nhóm thao tác Thực hiện Ước lượng & Tính đúng:** Xem phép tính và hướng dẫn chung; với phép chia hai chữ số, so sánh hai tích mốc rồi tự kéo dải trên tia số; với phép nhân hai chữ số, nhập số trước/sau làm tròn rồi kéo dải. Sau đó mới nhập kết quả chính xác hoặc làm mới câu trả lời.
   3. **Nhóm thao tác Điều khiển bàn phím & Báo lỗi:** Di chuyển giữa các ô bằng `Tab` / `Shift+Tab`, nhấn `Enter` để nộp bài không cần chuột, nhận thông báo lỗi tiếng Việt dễ hiểu khi bỏ trống hoặc nhập sai định dạng (`B-12`).
-  4. **Nhóm thao tác Nộp bài & Chấm điểm Server:** Gửi cặp `(estimate, exact)` lên `POST /api/submissions`, Server kiểm tra tất định khoảng `min <= estimate <= max` và `exact === đáp số đúng` (`B-03`).
+  4. **Nhóm thao tác Nộp bài & Chấm điểm Server:** Gửi hai đầu dải `estimateMin`, `estimateMax`, kết quả `exact` và giá trị làm tròn nếu cần lên `POST /api/submissions`; Server kiểm tra độ rộng, vị trí dải, bước làm tròn và đáp số đúng (`B-03`).
   5. **Nhóm thao tác Nhận phản hồi (Feedback B-06):** Xem đánh giá riêng cho Bước 1 (*"Ước lượng hợp lý"* hay *"Chưa hợp lý"*) và Bước 2 (*"Kết quả chính xác"* Đúng hay Sai), xem giải thích khoảng hợp lý `[min, max]` sau khi nộp.
   6. **Nhóm thao tác Lưu điểm & Đồng bộ Tiến độ:** Lưu lịch sử lượt làm (`attempts`) và kỷ lục điểm cao nhất (`progress`), nhận sao thưởng khi vượt kỷ lục cũ, tải lại trang (`F5`) vẫn giữ nguyên điểm số và trạng thái mở khóa (`B-05`).
 
@@ -155,7 +170,7 @@ Khi học sinh nộp cặp $(u, v)$, hệ thống xác thực:
 
 - **Các nhóm thao tác của Giáo viên (Kế thừa trên hệ thống):**
   1. **Nhóm thao tác Quản lý câu hỏi Ước lượng:** Xem danh sách bộ đề & câu hỏi dạng `estimate`, thêm/sửa/xóa (CRUD) câu hỏi Ước lượng, cấu hình điểm số và chủ đề.
-  2. **Nhóm thao tác Giao phiếu bài tập Ước lượng:** Chọn bộ câu hỏi Ước lượng để giao cho lớp học (`3A2`), thiết lập hạn nộp bài (`due date`) và ghi chú hướng dẫn làm tròn.
+  2. **Nhóm thao tác Giao phiếu bài tập Ước lượng:** Chọn bộ câu hỏi Ước lượng để giao cho lớp học (`3A2`), thiết lập hạn nộp bài (`due date`) và ghi chú cách làm tròn đối với phép nhân hoặc cách so sánh tích mốc đối với phép chia.
   3. **Nhóm thao tác Theo dõi & Phân tích kết quả:** Xem số lượng học sinh đã hoàn thành bài tập Ước lượng, xem thống kê tỷ lệ làm sai ở dạng bài *"Ước lượng trước khi tính đúng"*, xem tiến độ & điểm cao nhất trung bình của lớp.
   4. **Nhóm thao tác Báo cáo & Tổng hợp điểm:** Tra cứu điểm trung bình & tổng sao của từng học sinh, xuất file báo cáo lớp (`CSV / Excel`) bao gồm kết quả làm bài Ước lượng.
 
@@ -175,7 +190,7 @@ Khi học sinh nộp cặp $(u, v)$, hệ thống xác thực:
 
 ## 5. Danh mục 12 Câu hỏi Synthetic trên các Phép Nhân / Chia đã có (B-02, Mục 8.2 & 8.4)
 
-Toàn bộ 12 câu hỏi mẫu dưới đây được xây dựng trên **các phép nhân và phép chia thuộc các bài học đã có sẵn trong `data/seed.json`** (Bảng nhân/chia 6, 7, 8, 9 từ `bai-9` đến `bai-14` và Nhân/chia số có 2 chữ số với số có 1 chữ số ở `bai-23`, `bai-26`), tuân thủ tuyệt đối yêu cầu **không thêm nội dung SGK mới ngoài phạm vi (Mục 8.4)**:
+Toàn bộ 12 câu hỏi mẫu sử dụng các bài học đã có trong `data/seed.json`. Các câu nhân theo bảng hoặc nhân hai chữ số giữ bài học tương ứng; **ba câu chia có số bị chia hai chữ số chỉ gắn với `bai-26`**, sau kiến thức nhân hai chữ số với một chữ số ở `bai-23`. Không thêm nội dung SGK mới ngoài phạm vi (Mục 8.4). Với phép chia, `[min, max]` là **dải chuẩn duy nhất rộng 3 đơn vị**.
 
 | STT | Mã câu (`id`) | Gắn với bài học đã có | Đề bài (`prompt`) | Quy tắc ước lượng | Ước lượng chuẩn (`canonical`) | Khoảng hợp lý `[min, max]` | Kết quả đúng (`exact`) | Điểm |
 | :---: | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: |
@@ -187,10 +202,10 @@ Toàn bộ 12 câu hỏi mẫu dưới đây được xây dựng trên **các p
 | 6 | `est-6` | `bai-23` (Nhân 2 chữ số) | Làm tròn thừa số thứ nhất đến hàng chục để ước lượng rồi tính: **21 × 6 = ?** | $20 \times 6 = 120$ | `120` | **`[120, 130]`** | **126** | 10 |
 | 7 | `est-7` | `bai-23` (Nhân 2 chữ số) | Làm tròn thừa số thứ nhất đến hàng chục để ước lượng rồi tính: **29 × 7 = ?** | $30 \times 7 = 210$ | `210` | **`[200, 210]`** | **203** | 10 |
 | 8 | `est-8` | `bai-23` (Nhân 2 chữ số) | Làm tròn thừa số thứ nhất đến hàng chục để ước lượng rồi tính: **31 × 8 = ?** | $30 \times 8 = 240$ | `240` | **`[240, 250]`** | **248** | 10 |
-| 9 | `est-9` | `bai-10` / `bai-26` (Chia cho 6) | Ước lượng thương rồi tính chính xác: **78 : 6 = ?** | $78 \approx 80$, thương gần $13$ ($\pm 2$) | `13` | **`[11, 15]`** | **13** | 10 |
-| 10 | `est-10` | `bai-12` / `bai-26` (Chia cho 7) | Ước lượng thương rồi tính chính xác: **98 : 7 = ?** | $98 \approx 100$, thương gần $14$ ($\pm 2$) | `14` | **`[12, 16]`** | **14** | 10 |
+| 9 | `est-9` | `bai-26` (Chia hai chữ số cho một chữ số) | Ước lượng thương rồi tính chính xác: **78 : 6 = ?** | $6\times10=60$, $6\times15=90$; $78$ gần $90$ hơn. Chỉ nhận dải `12–15`. | `15` | **`[12, 15]`** | **13** | 10 |
+| 10 | `est-10` | `bai-26` (Chia hai chữ số cho một chữ số) | Ước lượng thương rồi tính chính xác: **98 : 7 = ?** | $7\times10=70$, $7\times15=105$; $98$ gần $105$ hơn. Dải `12–15`. | `15` | **`[12, 15]`** | **14** | 10 |
 | 11 | `est-11` | `bai-13` (Nhân với 8) | Mỗi hộp có **8** chiếc bút màu. Hỏi **18** hộp như thế có khoảng bao nhiêu chiếc (làm tròn 18 đến hàng chục) và chính xác bao nhiêu chiếc? | $20 \times 8 = 160$ | `160` | **`[140, 160]`** | **144** | 10 |
-| 12 | `est-12` | `bai-14` / `bai-26` (Chia cho 9) | Có **99** bông hoa cắm đều vào **9** lọ. Hãy ước lượng xem mỗi lọ có khoảng mấy bông hoa rồi tính kết quả chính xác. | $99 \approx 90$, thương gần $11$ ($\pm 2$) | `11` | **`[9, 13]`** | **11** | 10 |
+| 12 | `est-12` | `bai-26` (Chia hai chữ số cho một chữ số) | Có **99** bông hoa cắm đều vào **9** lọ. Hãy ước lượng xem mỗi lọ có khoảng mấy bông hoa rồi tính kết quả chính xác. | $9\times10=90$, $9\times15=135$; $99$ gần $90$ hơn. Dải `10–13`. | `10` | **`[10, 13]`** | **11** | 10 |
 
 ---
 
@@ -198,18 +213,18 @@ Toàn bộ 12 câu hỏi mẫu dưới đây được xây dựng trên **các p
 
 | ID | Tiêu chí bắt buộc của đề thi | Điều kiện nghiệm thu chi tiết (Given / When / Then) |
 | :---: | :--- | :--- |
-| **B-01** | Dạng bài mới truy cập được từ luồng học hiện có, không phải trang demo rời | **Given** học sinh đăng nhập vào hệ thống,<br/>**When** mở Trang chủ, Mục lục SGK (`muc-luc.html`) hoặc trang Luyện tập (`exercise.html` / `lesson.html`),<br/>**Then** truy cập và làm được ngay bài tập *"Ước lượng kết quả trước khi tính đúng"* thuộc bài học nhân/chia mà không cần gõ URL demo tách rời. |
+| **B-01** | Dạng bài mới truy cập được từ luồng học hiện có, không phải trang demo rời | **Given** học sinh đăng nhập và đã đến bài học phù hợp,<br/>**When** mở Trang chủ, Mục lục SGK hoặc trang Luyện tập,<br/>**Then** truy cập được bài ước lượng trong luồng học; câu chia hai chữ số thuộc **Bài 26**, không xuất hiện như nội dung của bài bảng chia 6–9. |
 | **B-02** | Có tối thiểu 12 fixture/câu hỏi synthetic tái lập được | **Given** chạy lệnh `npm run reset-db && npm start` từ dữ liệu mồi `data/seed.json`,<br/>**When** truy vấn cơ sở dữ liệu SQLite,<br/>**Then** có tối thiểu 12 câu hỏi thuộc `type = 'estimate'` về phép nhân/chia với đầy đủ tham số `min`, `max`, `exact`. |
-| **B-03** | Quy tắc tạo và chấm ước lượng được mô tả rõ, tất định và test được | **Given** một câu hỏi ước lượng có bộ tham số `(min, max, exact)` và câu trả lời của học sinh `(u, v)`,<br/>**When** gọi hàm chấm điểm trên Server nhiều lần liên tiếp,<br/>**Then** kết quả trả về luôn cố định 100% theo công thức $min \le u \le max$ và $v = exact$, không sử dụng hàm ngẫu nhiên hay gọi LLM runtime. |
+| **B-03** | Quy tắc tạo và chấm ước lượng rõ, tất định và test được | **Given** câu hỏi có `(min, max, canonical, exact)` và học sinh chọn dải `(estimateMin, estimateMax)`,<br/>**When** Server chấm nhiều lần,<br/>**Then** kết quả luôn cố định theo độ rộng dải, vị trí trong vùng chấm, điều kiện chứa thương đúng đối với phép chia, bước làm tròn đối với phép nhân có thừa số hai chữ số và `exact` của bước tính đúng; không dùng ngẫu nhiên hoặc LLM. |
 | **B-04** | API không trả đáp án đúng trước khi nộp | **Given** trình duyệt gọi `GET /api/question-sets/:setId/questions`,<br/>**When** kiểm tra payload JSON phản hồi từ Server,<br/>**Then** không có bất kỳ trường nào chứa `correct_answer`, `correctAnswer`, `min`, `max`, hay `exact`. |
 | **B-05** | Server chấm và lưu kết quả; refresh không làm mất trạng thái đã lưu | **Given** học sinh nộp bài qua `POST /api/submissions`,<br/>**When** Server chấm điểm xong và học sinh nhấn `F5` (Refresh) hoặc gọi `GET /api/me/progress`,<br/>**Then** lịch sử lượt làm (`attempts`), điểm cao nhất (`progress.best_score`), trạng thái hoàn thành (`completed`) và tổng sao (`users.total_stars`) được bảo toàn trong SQLite. |
 | **B-06** | Có feedback phân biệt "ước lượng hợp lý" với "kết quả chính xác" | **Given** học sinh nộp bài với 1 trong 4 tổ hợp (Đúng cả 2 / Ước lượng đúng - Tính đúng sai / Ước lượng sai - Tính đúng đúng / Sai cả 2),<br/>**When** nhận phản hồi từ `POST /api/submissions`,<br/>**Then** mỗi câu hỏi trả về `estimateOk`, `exactOk` và thông điệp `feedback` riêng biệt, hiển thị rõ ràng trạng thái từng bước trên giao diện. |
 | **B-07** | Không sửa `server/auth.js`, session, tài khoản mẫu hoặc deployment | **Given** đối chiếu `git diff` với commit gốc đã pin của starter repo,<br/>**When** kiểm tra `server/auth.js`, các route `/api/auth/*`, `/api/teacher/*`, `/api/admin/*`, danh sách tài khoản mẫu và `Dockerfile`/`DEPLOY.md`,<br/>**Then** các thành phần này không bị thay đổi. |
-| **B-08** | Có test tự động cho `normal`, `boundary`, `invalid input` và `scoring` | **Given** bộ kiểm thử tự động của dự án (đặc tả chi tiết trong `TEST_PLAN.md`),<br/>**When** thực thi kiểm thử,<br/>**Then** kiểm tra đầy đủ 4 nhóm: đầu vào chuẩn (`normal`), các giá trị biên `min`/`max`/`min-1`/`max+1` (`boundary`), dữ liệu lỗi (`invalid input`), và tính điểm/sao/hồi quy (`scoring`). |
+| **B-08** | Có test tự động cho `normal`, `boundary`, `invalid input` và `scoring` | **Given** bộ kiểm thử tự động của dự án,<br/>**When** thực thi kiểm thử,<br/>**Then** kiểm tra dải duy nhất rộng 3 của phép chia theo mốc gần hơn, dải sai độ rộng hoặc lệch cận, số chia 6–9, chia có dư/ thương dưới 10, dữ liệu lỗi, tính điểm/sao và hồi quy các type cũ. |
 | **B-09** | Bổ sung lệnh `npm test`; test đạt từ clean checkout | **Given** một bản sao mã nguồn vừa clone sạch,<br/>**When** chạy `npm ci` và `npm test`,<br/>**Then** toàn bộ các bài kiểm thử tự động chạy và đạt `PASS` (exit code `0`). |
 | **B-10** | Bổ sung CI chạy `npm ci` và `npm test` trên Pull Request | **Given** file cấu hình `.github/workflows/ci.yml` trong repository,<br/>**When** tạo hoặc cập nhật Pull Request trên GitHub,<br/>**Then** GitHub Actions tự động thực thi `npm ci` và `npm test` thành công. |
 | **B-11** | Không có PII/secret; chỉ dùng alias/tài khoản synthetic | **Given** toàn bộ mã nguồn, dữ liệu câu hỏi và lịch sử commit,<br/>**When** rà soát bảo mật và quyền riêng tư,<br/>**Then** chỉ chứa các tài khoản/nhân vật giả lập (`hocsinh01`..`99`, `giaovien01`), không chứa thông tin cá nhân thật hay khóa bí mật. |
-| **B-12** | Giao diện dùng được bằng bàn phím cho luồng chính và có thông báo lỗi dễ hiểu | **Given** học sinh thao tác trên trang làm bài chỉ bằng bàn phím,<br/>**When** nhấn `Tab`/`Shift+Tab` để nhập Bước 1 (Ước lượng) $\rightarrow$ Bước 2 (Tính đúng) và nhấn `Enter` để nộp bài,<br/>**Then** luồng hoạt động đầy đủ; nếu bỏ trống hoặc nhập sai kiểu số thì hiển thị thông báo lỗi tiếng Việt thân thiện, dễ hiểu. |
+| **B-12** | Giao diện dùng được bằng bàn phím và không lộ đáp án | **Given** học sinh thao tác chỉ bằng bàn phím,<br/>**When** dùng `Tab`/`Shift+Tab` và phím mũi tên để di chuyển dải rồi `Enter` để tiếp tục/nộp,<br/>**Then** luồng hai bước hoạt động đầy đủ; núm bắt đầu ở đầu trái, không tô trước vùng đúng, ô kết quả chỉ mở sau khi chọn dải, và lỗi được báo bằng tiếng Việt dễ hiểu. |
 
 ---
-*Các quyết định thiết kế kỹ thuật chi tiết được trình bày tại tài liệu [`DECISIONS.md`](./DECISIONS.md) và kế hoạch kiểm thử chi tiết được trình bày tại [`TEST_PLAN.md`](./TEST_PLAN.md).*
+*Quy tắc phép chia một dải rộng 3 đơn vị ở Mục 3.2–3.4 là quy tắc hiện hành. Các mô tả cũ về dải rộng 2 đơn vị hoặc hai dải cùng được chấp nhận không còn áp dụng.*

@@ -35,7 +35,7 @@
       <ol class="mt-3 space-y-3">
         <li class="rounded-2xl border-2 border-secondary/40 bg-secondary-container/40 p-4">
           <p class="font-label-md text-label-md font-bold">Bước 1 — Ước lượng</p>
-          <p class="font-body-md text-body-md mt-1">Với phép nhân có số hai chữ số, nhập giá trị ban đầu và giá trị sau khi làm tròn. Sau đó kéo núm tròn để chọn một khoảng rộng 10 đơn vị; với phép chia, khoảng rộng 2 đơn vị. Tia số không điền sẵn khoảng đáp án.</p>
+          <p class="font-body-md text-body-md mt-1">Với phép nhân có số hai chữ số, nhập giá trị ban đầu và giá trị sau khi làm tròn. Với phép chia, so sánh hai tích mốc dễ nhẩm. Sau đó kéo núm tròn: phép nhân chọn khoảng rộng 10 đơn vị, phép chia chọn khoảng rộng 3 đơn vị. Tia số không điền sẵn khoảng đáp án.</p>
         </li>
         <li class="rounded-2xl border-2 border-primary/30 bg-primary-fixed/40 p-4">
           <p class="font-label-md text-label-md font-bold">Bước 2 — Tính đúng</p>
@@ -45,8 +45,34 @@
       <p class="mt-3 rounded-xl bg-surface-container-low px-4 py-3 font-body-sm text-body-sm">Sau khi nộp, em sẽ thấy điểm và nhận xét riêng cho từng câu cùng đáp án chính xác để kiểm tra lại.</p>
     </section>
 
+    <section class="mt-5 rounded-3xl bg-surface-container-lowest p-6 shadow-[0_8px_24px_rgba(0,97,39,0.06)]" aria-labelledby="guide-division">
+      <h2 id="guide-division" class="font-headline-md text-headline-md text-primary">2. Cách ước lượng phép chia</h2>
+      <p class="mt-2 font-body-md text-body-md">Ta tìm hai mốc thương cách nhau 5 và nhân từng mốc với số chia. So sánh xem số bị chia gần tích nào hơn: gần mốc dưới thì lấy từ mốc dưới đến mốc dưới cộng 3; gần mốc trên thì lấy từ mốc trên trừ 3 đến mốc trên. Khi làm bài, tia số chỉ có các vạch; em phải tự kéo núm để chọn khoảng.</p>
+      <div class="mt-4 grid gap-3 md:grid-cols-2">
+        <article class="rounded-2xl border-2 border-secondary/40 bg-secondary-container/40 p-4">
+          <h3 class="font-label-md font-bold">Ví dụ 1: 91 : 7</h3>
+          <ol class="mt-2 list-decimal pl-5 space-y-1 font-body-sm text-body-sm">
+            <li>Tìm hai tích dễ tính: 7 × 10 = 70 và 7 × 15 = 105.</li>
+            <li>91 cách 105 là 14, cách 70 là 21 nên mốc 15 gần hơn.</li>
+            <li>Mốc 15 gần hơn nên chọn đúng một khoảng rộng 3 đơn vị: 12–15.</li>
+            <li>Sau đó mới tự tính và nhập kết quả chính xác.</li>
+          </ol>
+        </article>
+        <article class="rounded-2xl border-2 border-primary/30 bg-primary-fixed/40 p-4">
+          <h3 class="font-label-md font-bold">Ví dụ 2: 66 : 6</h3>
+          <ol class="mt-2 list-decimal pl-5 space-y-1 font-body-sm text-body-sm">
+            <li>Tìm hai tích dễ tính: 6 × 10 = 60 và 6 × 15 = 90.</li>
+            <li>66 gần 60 hơn 90 nên mốc thương gần là 10.</li>
+            <li>Mốc 10 gần hơn nên kéo chọn khoảng 10–13.</li>
+            <li>Cuối cùng tính phép chia chính xác ở Bước 2.</li>
+          </ol>
+        </article>
+      </div>
+      <p class="mt-3 rounded-xl bg-surface-container-low px-4 py-3 font-body-sm text-body-sm">“Rộng 3 đơn vị” nghĩa là hai đầu mút cách nhau 3; khoảng 12–15 gồm các số nguyên 12, 13, 14, 15. Cách làm này dùng cho phép chia hết có số bị chia hai chữ số, số chia 6, 7, 8 hoặc 9 và thương từ 10 trở lên (Bài 26).</p>
+    </section>
+
     <section class="mt-5 rounded-3xl bg-surface-container-lowest p-6 shadow-[0_8px_24px_rgba(0,97,39,0.06)]" aria-labelledby="guide-score">
-      <h2 id="guide-score" class="font-headline-md text-headline-md text-primary">2. Cách chấm điểm</h2>
+      <h2 id="guide-score" class="font-headline-md text-headline-md text-primary">3. Cách chấm điểm</h2>
       <div class="mt-3 overflow-x-auto">
         <table class="w-full text-left font-body-sm text-body-sm border-collapse">
           <caption class="sr-only">Bảng điểm theo kết quả từng bước</caption>
@@ -63,7 +89,7 @@
     </section>
 
     <section class="mt-5 rounded-3xl bg-surface-container-lowest p-6 shadow-[0_8px_24px_rgba(0,97,39,0.06)]" aria-labelledby="guide-keyboard">
-      <h2 id="guide-keyboard" class="font-headline-md text-headline-md text-primary">3. Dùng bàn phím</h2>
+      <h2 id="guide-keyboard" class="font-headline-md text-headline-md text-primary">4. Dùng bàn phím</h2>
       <ul class="mt-2 list-disc pl-5 space-y-1 font-body-md text-body-md">
         <li><kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Tab</kbd> chuyển từ hai ô làm tròn đến tia số; di chuyển khoảng bằng phím mũi tên rồi Tab sang kết quả chính xác.</li>
         <li><kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Shift</kbd> + <kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Tab</kbd> quay lại ô trước.</li>
@@ -73,9 +99,9 @@
     </section>
 
     <section class="mt-5 rounded-3xl bg-tertiary-fixed/50 p-6 shadow-[0_8px_24px_rgba(230,164,0,0.18)]" aria-labelledby="guide-teacher">
-      <h2 id="guide-teacher" class="font-headline-md text-headline-md text-primary">4. Dành cho giáo viên</h2>
+      <h2 id="guide-teacher" class="font-headline-md text-headline-md text-primary">5. Dành cho giáo viên</h2>
       <ul class="mt-2 list-disc pl-5 space-y-1 font-body-md text-body-md">
-        <li>Phiếu nằm trong bài <strong>Bài 9</strong> ở Mục lục SGK và có thẻ lối vào ở Trang chủ, Mục lục, Phòng Luyện tập và Góc Thầy Cô.</li>
+        <li>Phiếu luyện tổng hợp được gắn tại <strong>Bài 26</strong> trong Mục lục SGK; học sinh cũng có thể mở từ khu Ước lượng.</li>
         <li>Mọi câu đều dùng phép nhân/chia thuộc nội dung lớp 3 đã có; không thêm bài học mới.</li>
         <li>Đáp án và cách chấm nằm hoàn toàn ở máy chủ; trình duyệt chỉ nhận đề bài, không nhận đáp án.</li>
         <li>Kết quả được lưu vào hồ sơ học sinh; làm lại sẽ chỉ cộng sao khi vượt điểm cao nhất.</li>

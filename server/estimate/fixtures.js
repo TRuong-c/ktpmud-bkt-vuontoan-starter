@@ -8,8 +8,8 @@ const { KIND, computeParams, encodeAnswer } = require('./rules');
 
 const SET_ID = 'phieu-uoc-luong-nhan-chia';
 const SET_TITLE = 'Phiếu luyện tập: Ước lượng kết quả trước khi tính đúng (nhân/chia)';
-// Bài học mà bộ đề gắn vào (hiện ở Mục lục). Bài 9 chưa có bộ đề riêng nên không đè lên bộ cũ.
-const SET_LESSON_ID = 'bai-9';
+// Bài chia hai chữ số chỉ xuất hiện từ Bài 26; bộ luyện tổng hợp được gắn tại đây.
+const SET_LESSON_ID = 'bai-26';
 const CATEGORY = 'Ước lượng trước khi tính';
 
 const SPECS = [
@@ -21,14 +21,14 @@ const SPECS = [
   { id: 'est-6', lessonId: 'bai-23', kind: KIND.MUL_2DIGIT, a: 21, b: 6, points: 10, prompt: '21 × 6 = ?' },
   { id: 'est-7', lessonId: 'bai-23', kind: KIND.MUL_2DIGIT, a: 29, b: 7, points: 10, prompt: '29 × 7 = ?' },
   { id: 'est-8', lessonId: 'bai-23', kind: KIND.MUL_2DIGIT, a: 31, b: 8, points: 10, prompt: '31 × 8 = ?' },
-  { id: 'est-9', lessonId: 'bai-10', kind: KIND.DIV, a: 78, b: 6, points: 10, prompt: '78 : 6 = ?' },
-  { id: 'est-10', lessonId: 'bai-12', kind: KIND.DIV, a: 98, b: 7, points: 10, prompt: '98 : 7 = ?' },
+  { id: 'est-9', lessonId: 'bai-26', kind: KIND.DIV, a: 78, b: 6, points: 10, prompt: '78 : 6 = ?' },
+  { id: 'est-10', lessonId: 'bai-26', kind: KIND.DIV, a: 98, b: 7, points: 10, prompt: '98 : 7 = ?' },
   {
     id: 'est-11', lessonId: 'bai-13', kind: KIND.MUL_2DIGIT, a: 18, b: 8, points: 10,
     prompt: '18 × 8 = ?',
   },
   {
-    id: 'est-12', lessonId: 'bai-14', kind: KIND.DIV, a: 99, b: 9, points: 10,
+    id: 'est-12', lessonId: 'bai-26', kind: KIND.DIV, a: 99, b: 9, points: 10,
     prompt: '99 : 9 = ?',
   },
 ];

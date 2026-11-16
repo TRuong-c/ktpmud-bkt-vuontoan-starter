@@ -46,6 +46,7 @@ test('Trang estimate có đủ 2 bước, ví dụ minh hoạ và liên kết h�
     'Bước 2 — Tính đúng',
     'Ví dụ cách làm',
     'estimate-guide.html',
+    'id="est-sound-toggle"',
     'Xem hướng dẫn cách làm',
     'aria-live',
     'role="progressbar"',
@@ -62,15 +63,17 @@ test('Trang hướng dẫn công khai cách chấm nhưng không chứa đáp á
   assert.ok(!/correct_answer|allowedRange|exactAnswer/.test(html));
   // Hướng dẫn thao tác kéo khoảng mà không in đáp án phép tính ra trước bài.
   assert.ok(html.includes('khoảng rộng 10 đơn vị'));
-  assert.ok(html.includes('khoảng rộng 2 đơn vị'));
+  assert.ok(html.includes('khoảng rộng 3 đơn vị'));
   assert.ok(!html.includes('29 × 6 = 174'));
   assert.ok(!html.includes('30 × 6 = 180'));
-  assert.ok(!/6\s*×\s*7|19\s*×\s*6|78\s*:\s*6/.test(html));
+  assert.ok(!/6\s*×\s*7|19\s*×\s*6|78\s*:\s*6|98\s*:\s*7|99\s*:\s*9/.test(html));
+  assert.ok(html.includes('Cách ước lượng phép chia'));
+  assert.ok(html.includes('91 : 7'));
 });
 
 test('JS trang estimate: bàn phím, aria-invalid và không nhúng đáp án', () => {
   const js = read('assets/js/pages/estimate.js');
-  for (const text of ["e.key === 'Tab'", "e.key === 'Enter'", 'aria-invalid', 'mathapp:user-ready', 'syncStep', 'aria-valuenow', 'roundBefore', 'roundAfter', 'type="range"', 'data-estimate-ticks']) {
+  for (const text of ["e.key === 'Tab'", "e.key === 'Enter'", 'aria-invalid', 'mathapp:user-ready', 'syncStep', 'aria-valuenow', 'roundBefore', 'roundAfter', 'type="range"', 'data-estimate-ticks', 'est-sound-toggle', 'AudioContext']) {
     assert.ok(js.includes(text), `estimate.js thiếu: ${text}`);
   }
   // Đáp án chỉ nằm ở server; trình duyệt không được chứa khoảng chấm.

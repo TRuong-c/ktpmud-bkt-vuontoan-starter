@@ -10,10 +10,43 @@
   const startedAt = Date.now();
   let questions = [];
   let submitted = false;
+  let soundEnabled = true;
+  try { soundEnabled = localStorage.getItem('estimate-sound-enabled') !== 'false'; } catch (_) { /* dùng âm thanh mặc định */ }
+  let audioContext = null;
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const isInt = v => /^\d{1,9}$/.test(String(v).trim());
+
+  function playTone(frequency = 560, delay = 0, duration = 0.075) {
+    if (!soundEnabled || !(window.AudioContext || window.webkitAudioContext)) return;
+    try {
+      audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+      if (audioContext.state === 'suspended') audioContext.resume();
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      const start = audioContext.currentTime + delay;
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.09, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+      oscillator.start(start);
+      oscillator.stop(start + duration + 0.01);
+    } catch (_) { /* Âm thanh là tuỳ chọn; không ảnh hưởng thao tác làm bài. */ }
+  }
+
+  function syncSoundButton() {
+    const button = $('est-sound-toggle');
+    if (!button) return;
+    const icon = button.querySelector('.material-symbols-outlined');
+    if (icon) icon.textContent = soundEnabled ? 'volume_up' : 'volume_off';
+    button.setAttribute('aria-pressed', String(soundEnabled));
+    button.setAttribute('aria-label', soundEnabled ? 'Tắt âm thanh' : 'Bật âm thanh');
+    button.lastChild.textContent = soundEnabled ? ' Tắt âm thanh' : ' Bật âm thanh';
+  }
 
   const MSG = {
     emptyEstimate: 'Em hãy kéo núm tròn để chọn một khoảng ước lượng nhé!',
@@ -31,7 +64,20 @@
     const match = operation(q);
     return match && Number(match[1]) >= 10 && /[×x]/.test(match[2]) ? match : null;
   };
-  const intervalWidth = q => /[×x]/.test((operation(q) || [])[2] || '') ? 10 : 2;
+  const intervalWidth = q => /[×x]/.test((operation(q) || [])[2] || '') ? 10 : 3;
+  function selectedInterval(q) {
+    const slider = inp(q, 'estimate');
+    if (!slider || slider.disabled || slider.dataset.touched !== 'true') return null;
+    const center = Number(slider.value);
+    const width = intervalWidth(q);
+    const min = Number(slider.min), max = Number(slider.max), step = Number(slider.step);
+    const lower = center - width / 2, upper = center + width / 2;
+    if (!Number.isFinite(center) || !Number.isFinite(min) || !Number.isFinite(max)
+      || !Number.isFinite(step) || step <= 0 || center < min || center > max
+      || Math.abs((center - min) / step - Math.round((center - min) / step)) > 1e-8
+      || !Number.isSafeInteger(lower) || !Number.isSafeInteger(upper)) return null;
+    return { lower, upper };
+  }
   function axisFor(q) {
     const match = operation(q);
     if (!match) return null;
@@ -57,11 +103,12 @@
     } else {
       if (a % b !== 0) return null;
       const exact = a / b;
-      rangeMin = Math.max(1, exact - 1);
-      rangeMax = exact + 1;
-      center = Math.floor(Math.floor((a + 5) / 10) * 10 / b + 0.5);
-      span = Math.max(4, center - rangeMin, rangeMax - center);
-      tickStep = 1;
+      // Tia số rộng, không tô/đánh dấu vùng đúng; núm ở giữa dải 3 đơn vị.
+      rangeMin = 0;
+      rangeMax = Math.max(30, Math.ceil((exact + 15) / 5) * 5);
+      center = rangeMax / 2;
+      span = rangeMax / 2;
+      tickStep = 5;
     }
     return {
       min: Math.max(0, center - span),
@@ -101,7 +148,7 @@
     const u = inp(q, 'estimate'), v = inp(q, 'exact');
     if (!u || !v) return;
     const roundOk = roundingReady(q);
-    const ok = u.dataset.touched === 'true' && isInt(u.value) && roundOk;
+    const ok = !!selectedInterval(q) && roundOk;
     v.disabled = !ok;
     v.setAttribute('aria-disabled', ok ? 'false' : 'true');
     const badge = document.querySelector(`[data-step-badge="${q.id}"]`);
@@ -121,7 +168,9 @@
   function selectEstimate(q, value) {
     const slider = inp(q, 'estimate');
     if (!slider || slider.disabled) return;
-    slider.value = String(value);
+    const min = Number(slider.min), max = Number(slider.max), step = Number(slider.step) || 1;
+    const snapped = min + Math.round((Number(value) - min) / step) * step;
+    slider.value = String(Math.max(min, Math.min(max, snapped)));
     slider.dataset.touched = 'true';
     slider.classList.remove('opacity-60');
     updateSelectedInterval(q);
@@ -203,10 +252,8 @@
   /** Kiểm tra đã chọn khoảng trên tia số; đã chọn thì mở khóa ô tính chính xác. */
   function unlockIfEstimateValid(q, focusNext) {
     const u = inp(q, 'estimate');
-    const v = u.value.trim();
     if (u.dataset.touched !== 'true') { showErr(q, 'Em hãy kéo núm tròn để chọn một khoảng ước lượng trước nhé!', 'estimate'); return false; }
-    if (v === '') { showErr(q, MSG.emptyEstimate, 'estimate'); return false; }
-    if (!isInt(v)) { showErr(q, MSG.badEstimate, 'estimate'); return false; }
+    if (!selectedInterval(q)) { showErr(q, MSG.badEstimate, 'estimate'); return false; }
     showErr(q, '');
     syncStep(q);
     if (focusNext) inp(q, 'exact').focus();
@@ -308,18 +355,16 @@
         roundAnswer = { roundBefore: before.value.trim(), roundAfter: after.value.trim() };
       }
       if (u.dataset.touched !== 'true') { showErr(q, MSG.emptyEstimate, 'estimate'); u.focus(); return null; }
-      if (u.value.trim() === '' || !isInt(u.value)) { showErr(q, MSG.badEstimate, 'estimate'); u.focus(); return null; }
+      const interval = selectedInterval(q);
+      if (!interval) { showErr(q, MSG.badEstimate, 'estimate'); u.focus(); return null; }
       syncStep(q);
       if (v.value.trim() === '') { showErr(q, MSG.emptyExact, 'exact'); v.focus(); return null; }
       if (!isInt(v.value)) { showErr(q, MSG.badExact, 'exact'); v.focus(); return null; }
-      const width = intervalWidth(q);
-      const intervalMin = Number(u.value) - width / 2;
-      const intervalMax = intervalMin + width;
       answers[q.id] = {
         ...(roundAnswer || {}),
         estimate: u.value.trim(),
-        estimateMin: String(intervalMin),
-        estimateMax: String(intervalMax),
+        estimateMin: String(interval.lower),
+        estimateMax: String(interval.upper),
         exact: v.value.trim(),
       };
     }
@@ -367,6 +412,11 @@
           <button type="button" id="est-result-retry" class="rounded-2xl bg-primary px-4 py-2 font-label-md text-label-md text-on-primary inline-flex items-center gap-1"><span class="material-symbols-outlined text-[18px]" aria-hidden="true">refresh</span> Làm lại</button>
         </div>`;
       $('est-result-retry').addEventListener('click', () => location.reload());
+      if (r.scorePercent >= 80) {
+        playTone(660, 0); playTone(830, 0.11); playTone(990, 0.22);
+      } else {
+        playTone(440, 0); playTone(520, 0.12);
+      }
       box.focus();
       box.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (e) {
@@ -410,5 +460,20 @@
 
   $('est-submit').addEventListener('click', submit);
   $('est-reset').addEventListener('click', () => location.reload());
+  $('est-sound-toggle')?.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    try { localStorage.setItem('estimate-sound-enabled', String(soundEnabled)); } catch (_) { /* tiếp tục dùng thiết lập trong phiên */ }
+    syncSoundButton();
+    if (soundEnabled) playTone(660);
+  });
+  document.addEventListener('click', event => {
+    if (event.target.closest('#est-sound-toggle')) return;
+    const control = event.target.closest('button, input[data-q], summary');
+    if (control && !control.matches('input[type="range"]')) playTone(560);
+  });
+  document.addEventListener('change', event => {
+    if (event.target.matches('input[type="range"][data-step="estimate"]')) playTone(620, 0, 0.06);
+  });
+  syncSoundButton();
   document.addEventListener('mathapp:user-ready', init);
 })();

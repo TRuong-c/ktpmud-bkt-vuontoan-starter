@@ -99,7 +99,7 @@ Toàn bộ câu hỏi `type = 'estimate'` được chia thành **3 loại câu c
 | :--- | :---: | :---: | :--- |
 | **Loại 1: Phép nhân bảng 6, 7, 8, 9**<br/>*(Bài 9, 11, 13, 14: $a \times b$)* | $P = a \times b$ | $E = \text{round}_{10}(P)$ | Hai mốc chục liên tiếp kẹp quanh $P$:<br/>• $min = \lfloor P / 10 \rfloor \times 10$<br/>• $max = \lceil P / 10 \rceil \times 10$ |
 | **Loại 2: Nhân số có 2 chữ số với số có 1 chữ số**<br/>*(Bài 23: $A \times b$, làm tròn $A$)* | $P = A \times b$ | $E = \text{round}_{10}(A) \times b$ | Bao phủ từ mốc chục của tích $P$ tới tích ước lượng $E$:<br/>• $min = \min(\lfloor P / 10 \rfloor \times 10,\; E)$<br/>• $max = \max(\lceil P / 10 \rceil \times 10,\; E)$ |
-| **Loại 3: Phép chia cho 6, 7, 8, 9**<br/>*(Bài 10, 12, 13, 14, 26: $A : b$)* | $Q = A : b$ | $E = \text{round}\left(\frac{\text{round}_{10}(A)}{b}\right)$ | Đoạn lân cận thương đúng với dung sai cố định $\pm 2$ đơn vị:<br/>• $min = \max(1,\; Q - 2)$<br/>• $max = Q + 2$ |
+| **Loại 3: Chia hai chữ số cho 6, 7, 8, 9**<br/>*(Bài 26: $A : b$; chia hết, $Q\ge10$)* | $Q=A:b$ | $L=5\lfloor Q/5\rfloor$, $U=L+5$; chọn mốc có tích $bL$ hoặc $bU$ gần $A$ hơn. | Nếu chọn $L$: $[min,max]=[L,L+3]$; nếu chọn $U$: $[min,max]=[U-3,U]$. Chỉ nhận đúng dải duy nhất rộng 3 đơn vị này. Ví dụ $78:6$ nhận $[12,15]$, $66:6$ nhận $[10,13]$. |
 
 > **Khẳng định tính tất định:** Không sử dụng từ "hoặc", không có tham số ngẫu nhiên. Mọi giá trị `(min, max, canonical, exact)` được tính trước bằng thuật toán cố định khi nạp dữ liệu mồi (`seed.json`) và kiểm chứng tự động bằng Unit Test.
 
@@ -124,13 +124,12 @@ Toàn bộ câu hỏi `type = 'estimate'` được chia thành **3 loại câu c
     - Khi tải trang câu hỏi, tiêu điểm (focus) bắt buộc đặt vào **Ô 1 (Bước 1: Ước lượng)**.
     - **Ô 2 (Bước 2: Kết quả tính đúng)** ban đầu ở trạng thái bị vô hiệu hóa (`disabled`) hoặc có lớp nhắc nhở: *"Em hãy hoàn thành ước lượng ở Bước 1 trước nhé"*.
     - Chỉ khi học sinh nhập số hợp lệ vào Ô 1 và bấm `Tab` / `Enter` (hoặc rời ô), Ô 2 mới được mở khóa (`enabled`) và focus tự động chuyển sang Ô 2.
-  - Khi hoàn thành cả bài, Client gửi trọn vẹn payload chứa cặp `{ estimate: u, exact: v }` trong 1 request `POST /api/submissions` nguyên khối (atomic).
+  - Khi hoàn thành cả bài, Client gửi `{ estimateMin, estimateMax, exact, roundBefore?, roundAfter? }` trong 1 request `POST /api/submissions` nguyên khối (atomic).
 
 #### B. Trả lời Câu hỏi Bảo vệ: "Nếu học sinh nhập đúng kết quả chính xác vào ô ước lượng thì có được tính là hợp lý không?"
 - **Phân tích:**
-  - Về mặt toán học: Kết quả chính xác $exact$ luôn nằm trong khoảng hợp lý $[min, max]$. Nếu học sinh có khả năng nhẩm nhanh và điền đúng số $exact$ vào ô ước lượng, về mặt logic giá trị $min \le u \le max$ vẫn hoàn toàn thỏa mãn. Do đó, **thuật toán vẫn công nhận `estimateOk = true`** để bảo đảm tính công bằng, không phạt học sinh có năng lực tính nhẩm xuất sắc.
-  - Về mặt sư phạm (`B-06 Feedback`): Hệ thống nhận diện trường hợp $u === exact$ nhưng $u \ne canonical$ để đưa ra câu nhận xét sư phạm tinh tế:
-    *"Em đã tính ra ngay kết quả chính xác! Tuy nhiên ở bước Ước lượng, em hãy rèn luyện thói quen làm tròn số đến hàng chục (ví dụ: [canonical]) để tập nhẩm nhanh khoảng giá trị nhé!"*.
+  - Học sinh kéo một **dải**, không nhập một số ước lượng đơn. Một số đúng được nhập vào ô `estimate` cũ sẽ không tạo ra `estimateMin` và `estimateMax`, nên không được chấm đúng Bước 1.
+  - Với phép chia, hai đầu dải phải trùng đúng khoảng chuẩn theo mốc gần hơn; đáp số chính xác được nhập riêng ở Bước 2. Phản hồi sau khi nộp phân biệt kết quả của hai bước.
 
 ---
 

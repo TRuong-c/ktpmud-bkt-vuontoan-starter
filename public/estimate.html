@@ -25,7 +25,9 @@
         <a href="estimate-center.html" class="inline-flex items-center gap-1.5 font-headline-sm text-label-md text-primary hover:underline"><span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span> Khu luyện tập Ước lượng</a>
         <a href="muc-luc.html" class="inline-flex items-center gap-1.5 font-headline-sm text-label-md text-on-surface-variant hover:underline">Mục Lục SGK</a>
       </div>
-      <a href="estimate-guide.html" class="inline-flex items-center gap-1.5 rounded-full bg-surface-container px-4 py-2 font-label-md text-label-md text-primary hover:bg-surface-container-high focus:outline-none focus:ring-4 focus:ring-primary-fixed"><span class="material-symbols-outlined text-[18px]" aria-hidden="true">menu_book</span> Xem hướng dẫn cách làm</a>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="est-sound-toggle" type="button" aria-pressed="true" class="inline-flex items-center gap-1.5 rounded-full bg-surface-container px-4 py-2 font-label-md text-label-md text-primary hover:bg-surface-container-high focus:outline-none focus:ring-4 focus:ring-primary-fixed"><span class="material-symbols-outlined text-[18px]" aria-hidden="true">volume_up</span> Tắt âm thanh</button>
+      </div>
     </div>
 
     <div class="mt-3 rounded-3xl bg-surface-container-lowest shadow-[0_10px_30px_rgba(0,97,39,0.08)] p-6">
@@ -33,10 +35,13 @@
       <h1 id="lesson-title" class="font-headline-lg text-headline-lg text-primary mt-1">Ước lượng kết quả trước khi tính đúng</h1>
       <p id="set-title" class="font-body-md text-body-md text-on-surface-variant mt-1">Phiếu luyện tập nhân, chia dành cho học sinh lớp 3.</p>
 
-      <div class="mt-4 grid gap-3 sm:grid-cols-2">
+      <details id="est-help" class="mt-4 rounded-2xl border-2 border-primary/20 bg-surface-container-low">
+        <summary class="cursor-pointer px-4 py-3 font-label-md text-label-md font-bold text-primary focus:outline-none focus:ring-4 focus:ring-primary-fixed rounded-2xl"><span class="material-symbols-outlined align-middle text-[20px]" aria-hidden="true">menu_book</span> Xem hướng dẫn cách làm <span class="block sm:inline font-body-sm font-normal text-on-surface-variant sm:ml-2">Ước lượng trước → Tính đúng sau</span></summary>
+        <div class="px-4 pb-4">
+      <div class="grid gap-3 sm:grid-cols-2">
         <div class="rounded-2xl border-2 border-secondary/40 bg-secondary-container/40 p-4">
           <span class="inline-flex items-center gap-1 rounded-full bg-secondary text-on-secondary px-3 py-1 font-label-sm text-label-sm font-bold"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">looks_one</span> Bước 1 — Ước lượng</span>
-        <p class="mt-2 font-body-sm text-body-sm text-on-surface">Với phép nhân có số hai chữ số, nhập giá trị trước và sau khi làm tròn. Sau đó kéo núm tròn để chọn một khoảng: phép nhân rộng 10 đơn vị, phép chia rộng 2 đơn vị. Kết quả chính xác nhập ở Bước 2.</p>
+        <p class="mt-2 font-body-sm text-body-sm text-on-surface">Với phép nhân có số hai chữ số, nhập giá trị trước và sau khi làm tròn. Sau đó kéo núm tròn để chọn một khoảng: phép nhân rộng 10 đơn vị, phép chia rộng 3 đơn vị. Kết quả chính xác nhập ở Bước 2.</p>
         </div>
         <div class="rounded-2xl border-2 border-primary/30 bg-primary-fixed/40 p-4">
           <span class="inline-flex items-center gap-1 rounded-full bg-primary text-on-primary px-3 py-1 font-label-sm text-label-sm font-bold"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">looks_two</span> Bước 2 — Tính đúng</span>
@@ -46,9 +51,12 @@
 
       <div class="mt-4 rounded-2xl bg-surface-container-low p-4" aria-label="Ví dụ cách làm">
         <p class="font-label-md text-label-md font-bold text-primary">Ví dụ cách làm (ví dụ minh hoạ, không nằm trong phiếu)</p>
-        <p class="mt-1 font-body-md text-body-md">Ví dụ <strong>29 × 6</strong>: nhập số trước làm tròn rồi số sau làm tròn. Tiếp theo, kéo núm tròn để chọn một khoảng rộng 10 đơn vị. Với phép chia, khoảng rộng 2 đơn vị. Trục số không hiện sẵn khoảng đáp án.</p>
+        <p class="mt-1 font-body-md text-body-md">Ví dụ <strong>29 × 6</strong>: nhập số trước làm tròn rồi số sau làm tròn. Tiếp theo, kéo núm tròn để chọn một khoảng rộng 10 đơn vị. Với phép chia, khoảng rộng 3 đơn vị. Trục số không hiện sẵn khoảng đáp án.</p>
         <p class="mt-2 font-body-sm text-body-sm text-on-surface-variant"><span class="material-symbols-outlined align-middle text-[18px]" aria-hidden="true">keyboard</span> Dùng <kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Tab</kbd> để chuyển ô; dùng phím mũi tên để di chuyển khoảng trên tia số. <kbd class="rounded border border-outline-variant bg-surface px-1.5 py-0.5 font-bold">Enter</kbd> chuyển giữa các bước. Kết quả chấm sẽ hiện sau khi nộp.</p>
       </div>
+          <a href="estimate-guide.html" class="mt-4 inline-flex items-center gap-1 rounded-full bg-primary px-4 py-2 font-label-md text-label-md font-bold text-on-primary focus:outline-none focus:ring-4 focus:ring-primary-fixed"><span class="material-symbols-outlined text-[18px]" aria-hidden="true">menu_book</span> Xem hướng dẫn đầy đủ</a>
+        </div>
+      </details>
 
       <div class="mt-4 h-3 rounded-full bg-surface-container overflow-hidden" role="progressbar" aria-labelledby="est-progress-text" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="est-progressbar"><div id="est-progress" class="h-full bg-primary rounded-full transition-all" style="width:0%"></div></div>
       <p id="est-progress-text" class="mt-1.5 font-label-sm text-label-sm text-on-surface-variant" aria-live="polite">Đang tải câu hỏi...</p>

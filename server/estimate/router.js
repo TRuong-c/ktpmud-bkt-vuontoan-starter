@@ -64,12 +64,19 @@ function estimateQuestionParams(prompt) {
   const kind = operator === ':' || operator === '÷'
     ? KIND.DIV
     : (a >= 10 ? KIND.MUL_2DIGIT : KIND.MUL_TABLE);
-  if (kind === KIND.DIV && (b < 6 || b > 9)) throw new Error('Phép chia ước lượng chỉ dùng số chia 6, 7, 8 hoặc 9.');
   const normalizedPrompt = `${a} ${kind === KIND.DIV ? ':' : '×'} ${b} = ?`;
   const answer = computeParams(kind, a, b);
-  const width = kind === KIND.DIV ? 2 : 10;
+  const width = kind === KIND.DIV ? 3 : 10;
   if (answer.max - answer.min < width) throw new Error(`Khoảng hợp lý của phép tính này hẹp hơn ${width} đơn vị, không dùng được với thanh trượt hiện tại.`);
-  return { normalizedPrompt, answer };
+  return { normalizedPrompt, answer, kind };
+}
+
+function ensureDivisionLesson(lessonId, kind) {
+  if (kind !== KIND.DIV) return;
+  const lesson = db.prepare('SELECT number FROM lessons WHERE id=?').get(lessonId);
+  if (!lesson || Number(lesson.number) < 26) {
+    throw new Error('Phép chia ước lượng chỉ được đặt từ Bài 26, sau khi học sinh đã học chia số có hai chữ số.');
+  }
 }
 
 router.post('/api/teacher/estimate/sets/:setId/questions', requireTeacher, (req, res) => {
@@ -80,7 +87,8 @@ router.post('/api/teacher/estimate/sets/:setId/questions', requireTeacher, (req,
     if (existingTypes.some(row => row.type !== 'estimate')) {
       return res.status(409).json({ error: 'Phiếu này có câu hỏi loại khác. Hãy tạo phiếu Estimate riêng.' });
     }
-    const { normalizedPrompt, answer } = estimateQuestionParams(req.body && req.body.prompt);
+    const { normalizedPrompt, answer, kind } = estimateQuestionParams(req.body && req.body.prompt);
+    ensureDivisionLesson(set.lesson_id, kind);
     const points = Math.max(1, Math.min(100, Math.round(Number(req.body && req.body.points) || 5)));
     const category = String((req.body && req.body.category) || 'Ước lượng trước khi tính').trim().slice(0, 120);
     const maxSort = db.prepare('SELECT COALESCE(MAX(sort_order),0) AS m FROM questions WHERE set_id=?').get(set.id).m;
@@ -96,9 +104,11 @@ router.post('/api/teacher/estimate/sets/:setId/questions', requireTeacher, (req,
 
 router.put('/api/teacher/estimate/questions/:id', requireTeacher, (req, res) => {
   try {
-    const question = db.prepare("SELECT id FROM questions WHERE id=? AND type='estimate'").get(req.params.id);
+    const question = db.prepare("SELECT id, set_id FROM questions WHERE id=? AND type='estimate'").get(req.params.id);
     if (!question) return res.status(404).json({ error: 'Không tìm thấy câu hỏi ước lượng.' });
-    const { normalizedPrompt, answer } = estimateQuestionParams(req.body && req.body.prompt);
+    const set = db.prepare('SELECT lesson_id FROM question_sets WHERE id=?').get(question.set_id);
+    const { normalizedPrompt, answer, kind } = estimateQuestionParams(req.body && req.body.prompt);
+    ensureDivisionLesson(set && set.lesson_id, kind);
     const points = Math.max(1, Math.min(100, Math.round(Number(req.body && req.body.points) || 5)));
     const category = String((req.body && req.body.category) || 'Ước lượng trước khi tính').trim().slice(0, 120);
     db.prepare('UPDATE questions SET prompt=?,correct_answer=?,points=?,category=? WHERE id=? AND type=\'estimate\'')

@@ -31,7 +31,7 @@ const exactAnswers = () => Object.fromEntries(
       const p = R.parseAnswer(q.correct_answer);
       const expr = q.prompt.match(/(?:^|\s)(\d{2,})\s*[×x]\s*(\d+)\s*=\s*\?/i);
       const rounding = expr ? { roundBefore: expr[1], roundAfter: String(R.round10(Number(expr[1]))) } : {};
-      const width = /[×x]/i.test(q.prompt) ? 10 : 2;
+      const width = /[×x]/i.test(q.prompt) ? 10 : 3;
       return [q.id, { ...rounding, estimateMin: String(p.min), estimateMax: String(p.min + width), exact: String(p.exact) }];
     }));
 

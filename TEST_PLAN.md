@@ -9,6 +9,19 @@ track: "Track B — Brownfield Extension (ktpmud-bkt-vuontoan-starter)"
 # KẾ HOẠCH KIỂM THỬ HỆ THỐNG (TEST_PLAN.md)
 **Dự án:** Vườn Toán Lớp 3 — Dạng bài *"Ước lượng kết quả trước khi tính đúng"* (Track B)
 
+## Cập nhật quy tắc phép chia (2026-11-16)
+
+Các bảng ca kiểm thử cũ bên dưới mô tả phiên bản nhập một giá trị ước lượng. Với `type = estimate` hiện tại, học sinh kéo dải và gửi `estimateMin`, `estimateMax`, `exact`. Phép chia hai chữ số cho 6–9 chỉ được chấm đúng Bước 1 khi dải rộng **3 đơn vị** và trùng đúng một dải theo tích mốc gần hơn:
+
+| Phép chia | Dải đúng duy nhất | Dải cần từ chối |
+| :--- | :--- | :--- |
+| `78 : 6` | `12–15` | `12–14`, `13–15`, `11–14` |
+| `66 : 6` | `10–13` | `10–12`, `11–14` |
+| `98 : 7` | `12–15` | `13–15`, `11–14` |
+| `96 : 6` | `15–18` | `15–17`, `16–19` |
+
+Kiểm tra thêm: hai đầu dải là số nguyên, dải chứa thương đúng, câu không chia hết hoặc thương dưới 10 bị từ chối, tia số không tô sẵn dải đúng, núm bắt đầu bên trái, và bốn type cũ vẫn chấm như trước. Các kiểm thử thực thi tương ứng nằm trong `tests/estimate.rules.test.js`, `tests/estimate.api.test.js`, `tests/estimate.ui.test.js`.
+
 ---
 
 ## 1. Mục tiêu & Chiến lược Kiểm thử (Test Strategy)

@@ -16,12 +16,17 @@ test('computeParams: 3 loại câu theo ADR-002', () => {
   assert.deepEqual(R.computeParams(R.KIND.MUL_TABLE, 6, 8), { min: 40, max: 50, canonical: 50, exact: 48 });
   assert.deepEqual(R.computeParams(R.KIND.MUL_2DIGIT, 19, 6), { min: 110, max: 120, canonical: 120, exact: 114 });
   assert.deepEqual(R.computeParams(R.KIND.MUL_2DIGIT, 29, 7), { min: 200, max: 210, canonical: 210, exact: 203 });
-  assert.deepEqual(R.computeParams(R.KIND.DIV, 78, 6), { min: 12, max: 14, canonical: 13, exact: 13 });
-  assert.deepEqual(R.computeParams(R.KIND.DIV, 99, 9), { min: 10, max: 12, canonical: 11, exact: 11 });
+  assert.deepEqual(R.computeParams(R.KIND.DIV, 78, 6), { min: 12, max: 15, canonical: 15, exact: 13 });
+  assert.deepEqual(R.computeParams(R.KIND.DIV, 98, 7), { min: 12, max: 15, canonical: 15, exact: 14 });
+  assert.deepEqual(R.computeParams(R.KIND.DIV, 99, 9), { min: 10, max: 13, canonical: 10, exact: 11 });
+  assert.deepEqual(R.computeParams(R.KIND.DIV, 66, 6), { min: 10, max: 13, canonical: 10, exact: 11 });
+  assert.deepEqual(R.computeParams(R.KIND.DIV, 96, 6), { min: 15, max: 18, canonical: 15, exact: 16 });
 });
 
 test('computeParams: từ chối đầu vào sai', () => {
   assert.throws(() => R.computeParams(R.KIND.DIV, 79, 6), RangeError);
+  assert.throws(() => R.computeParams(R.KIND.DIV, 48, 4), RangeError);
+  assert.throws(() => R.computeParams(R.KIND.DIV, 54, 6), RangeError); // thương nhỏ hơn 10
   assert.throws(() => R.computeParams('khac', 1, 1), RangeError);
   assert.throws(() => R.computeParams(R.KIND.MUL_TABLE, 0, 5), RangeError);
 });
@@ -31,7 +36,7 @@ test('TC-SEED: 12 fixture khớp bảng REQUIREMENTS §5 và đúng bất biến
   const expected = {
     'est-1': [40, 50, 40, 42], 'est-2': [40, 50, 50, 48], 'est-3': [50, 60, 60, 56], 'est-4': [60, 70, 60, 63],
     'est-5': [110, 120, 120, 114], 'est-6': [120, 130, 120, 126], 'est-7': [200, 210, 210, 203], 'est-8': [240, 250, 240, 248],
-    'est-9': [12, 14, 13, 13], 'est-10': [13, 15, 14, 14], 'est-11': [140, 160, 160, 144], 'est-12': [10, 12, 11, 11],
+    'est-9': [12, 15, 15, 13], 'est-10': [12, 15, 15, 14], 'est-11': [140, 160, 160, 144], 'est-12': [10, 13, 10, 11],
   };
   for (const r of buildQuestionRows()) {
     const p = R.parseAnswer(r.correctAnswer); // ném lỗi nếu sai bất biến
@@ -104,11 +109,14 @@ test('Ước lượng nhân số hai chữ số chấm dải kéo nằm trọn t
   assert.equal(wrongRounding.estimateOk, false);
 });
 
-test('Phép chia 78 : 6 chấp nhận dải 12–14, từ chối dải lệch cận', () => {
-  const question = { id: 'division', points: 10, prompt: '78 : 6 = ?', correct_answer: JSON.stringify({ min: 12, max: 14, canonical: 13, exact: 13 }) };
-  assert.equal(R.gradeEstimate(question, { estimateMin: '12', estimateMax: '14', exact: '13' }).correct, true);
-  assert.equal(R.gradeEstimate(question, { estimateMin: '11', estimateMax: '13', exact: '13' }).estimateOk, false);
+test('Phép chia 78 : 6 chỉ chấp nhận dải 12–15 rộng 3 đơn vị', () => {
+  const question = { id: 'division', points: 10, prompt: '78 : 6 = ?', correct_answer: JSON.stringify({ min: 12, max: 15, canonical: 15, exact: 13 }) };
+  assert.equal(R.gradeEstimate(question, { estimateMin: '12', estimateMax: '15', exact: '13' }).correct, true);
+  assert.equal(R.gradeEstimate(question, { estimateMin: '12', estimateMax: '14', exact: '13' }).estimateOk, false);
   assert.equal(R.gradeEstimate(question, { estimateMin: '13', estimateMax: '15', exact: '13' }).estimateOk, false);
+  assert.equal(R.gradeEstimate(question, { estimateMin: '11', estimateMax: '13', exact: '13' }).estimateOk, false);
+  assert.equal(R.gradeEstimate(question, { estimateMin: '14', estimateMax: '16', exact: '13' }).estimateOk, false);
+  assert.equal(R.gradeEstimate(question, { estimateMin: '11', estimateMax: '15', exact: '13' }).estimateOk, false);
 });
 
 test('parseAnswer: từ chối định dạng cũ "75-85|81" và JSON thiếu trường', () => {
