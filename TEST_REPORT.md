@@ -1,23 +1,24 @@
 ---
 title: "Báo cáo Kết quả Kiểm thử — Track B: Vườn Toán Lớp 3"
 document_id: "KTPMUD-2026-TRACKB-TEST-REPORT"
-version: "1.2.0-local-verified"
-date: "2026-11-15"
+version: "1.3.0-local-and-CI-evidence"
+date: "2026-11-17"
 track: "Track B — Vườn Toán Lớp 3 (hoang_mai_toan)"
 group: "29"
 repository: "https://github.com/TRuong-c/ktpmud-bkt-vuontoan-starter"
 working_branch: "track-b-main"
-status: "LOCAL_TEST_PASS_31_OF_31; CI_NOT_VERIFIED; COMMIT_SHA_NOT_CAPTURED"
+status: "LOCAL_TEST_PASS_31_OF_31; CI_6_SUCCESS_VISIBLE; LOCAL_TEST_COMMIT_NOT_CAPTURED"
 ---
 
 # BÁO CÁO KẾT QUẢ KIỂM THỬ (TEST_REPORT.md)
 
 **Dự án:** Vườn Toán Lớp 3 — Thêm dạng bài *“Ước lượng kết quả trước khi tính đúng”*  
 **Nhóm:** 29 · **Track:** B  
-**Ngày kiểm thử được chứng minh:** 15/11/2026
+**Ngày kiểm thử local được chứng minh:** 15/11/2026  
+**Ngày cập nhật trạng thái CI:** 17/11/2026
 
 > [!IMPORTANT]
-> **Phân biệt bằng chứng:** Nhóm đã cung cấp ảnh Terminal thể hiện lần chạy **31 tests, 31 pass, 0 fail, 0 skipped** trên máy local ngày 15/11/2026 (Node.js v22.23.4). Đây là kết quả *đã quan sát được*, không phải kết quả giả định. Không suy diễn rằng GitHub Actions/CI đã xanh, rằng ứng dụng đã được kiểm thử thủ công toàn diện, hoặc rằng thành viên khác đã chạy thêm các lượt test. Những mục chưa có bằng chứng được ghi đúng là **chưa xác minh**, không tự điền số liệu hoặc SHA.
+> **Phân biệt bằng chứng:** Nhóm đã cung cấp ảnh Terminal thể hiện lần chạy **31 tests, 31 pass, 0 fail, 0 skipped** trên máy local ngày 15/11/2026 (Node.js v22.23.4). Đây là kết quả *đã quan sát được*, không phải kết quả giả định. **Cập nhật 17/11:** ảnh GitHub Actions nhóm cung cấp hiển thị **6/6 CI workflow runs xanh** trên `track-b-main`, mới nhất tại commit `522bb7d` ngày 16/11. Chưa xem log từng job để xác nhận chi tiết bộ test chạy trong CI, cũng chưa chứng minh lần test local ngày 15/11 được thực hiện tại đúng SHA đó. Chưa suy diễn rằng ứng dụng đã được kiểm thử thủ công toàn diện hay rằng thành viên khác có thêm lượt test.
 >
 > Báo cáo này **thay thế các số liệu giả** từng xuất hiện ở bản Checkpoint 1 (như “14 Passed” và “CI xanh 100%”). Bản kế hoạch `TEST_PLAN.md` và bảng test từng ghi ở báo cáo draft không được xem là kết quả chạy thực tế.
 
@@ -123,19 +124,20 @@ Script `test` thực tế in ra Terminal:
 
 ---
 
-## 5. Kết quả kiểm thử tự động trên CI (GitHub Actions Run)
+## 5. Kết quả GitHub Actions CI — cập nhật theo ảnh ngày 17/11/2026
 
-| Nội dung | Tình trạng kiểm chứng đến 15/11/2026 |
+| Nội dung | Tình trạng kiểm chứng |
 | :--- | :--- |
-| Workflow ở `.github/workflows/` | Có thư mục `.github/` trong dự án theo ảnh VS Code; **chưa xác minh được tên và nội dung workflow** |
-| GitHub Actions run URL | **Chưa xác minh được** |
-| Commit SHA của CI run | **Chưa xác minh được** |
-| Kết quả CI `npm ci && npm test` | **Chưa xác minh** — không báo cáo CI xanh |
-| Check `validate` trên PR nộp bài | Thuộc repo `ktpmud-project`, **chưa xác minh**; khác với test CI của code |
+| Workflow `CI` | **Đã thấy trong ảnh Actions.** |
+| Số workflow runs hiển thị | **6** runs trên nhánh `track-b-main`. |
+| Kết quả hiển thị | **6/6 có dấu xanh**, không có lượt đỏ trong danh sách ảnh. |
+| Lượt mới nhất | Run #6, ngày 16/11/2026, khoảng 15:48 GMT+7, commit rút gọn `522bb7d`; ảnh hiển thị chạy thành công. |
+| SHA commit của lượt mới nhất | `522bb7d2ba01057bae2721d7df00301870245688` theo `source-ref.json` mà nhóm đã nhập và ảnh nhánh; **chưa dùng SHA này để thay thế SHA tại thời điểm chạy test local ngày 15/11**. |
+| URL CI | [Danh sách GitHub Actions của nhóm](https://github.com/TRuong-c/ktpmud-bkt-vuontoan-starter/actions); nhóm đã nhập một URL run cụ thể vào `source-ref.json`, nhưng ảnh cắt mất phần cuối nên **chưa đọc được ID run để trích chính xác ở tài liệu này**. |
+| Log chi tiết các job | **Chưa xem được.** Không suy diễn workflow đã chạy đúng `npm ci && npm test` hoặc quét bảo mật chỉ từ biểu tượng xanh. |
+| Check `validate` trong repository nộp bài | **Khác workflow CI của ứng dụng**, chưa có bằng chứng Draft PR/validate thành công tại thời điểm lập cập nhật này. |
 
-**Kết luận về B-09/B-10:** Lần chạy `npm.cmd ci` và `npm.cmd test` thành công trên máy Windows là bằng chứng tích cực cho **B-09 trên môi trường local**. Tiêu chí **B-10 chưa thể đánh dấu đạt** nếu chưa có CI run thực tế trên Pull Request và URL tương ứng.
-
-Nguồn kiểm chứng thêm khi có thể truy cập GitHub: [Actions của fork nhóm 29](https://github.com/TRuong-c/ktpmud-bkt-vuontoan-starter/actions).
+**Đánh giá:** Có bằng chứng trực quan rõ ràng **GitHub Actions CI thành công 6 lượt** và kết quả test local 31/31 đạt; phần chưa chứng minh gồm nội dung log từng CI run, SHA tại đúng lần test local và kết quả `validate` của Draft PR. Cần không nhầm ba loại bằng chứng này.
 
 ---
 
@@ -150,7 +152,7 @@ Nguồn kiểm chứng thêm khi có thể truy cập GitHub: [Actions của for
 ### 6.2. Rủi ro và những điều chưa được chứng minh
 
 1. **Commit source của lần test:** Chưa ghi được SHA và `git status` tại thời điểm chạy, nên chưa thể khẳng định chính snapshot đã được đẩy lên fork GitHub. Đặc biệt không dùng commit SHA PC-1 cũ làm SHA kiểm thử ngày 15/11.
-2. **CI và clean checkout độc lập:** Chưa có link Actions xanh trên PR; dù `npm.cmd ci` thành công ở local, kết quả chưa chứng minh chạy được trong CI sạch trên hệ điều hành khác.
+2. **Giới hạn bằng chứng CI:** Ảnh ngày 17/11 chứng minh sáu workflow runs hiển thị thành công, nhưng chưa có log từng run chứng minh đủ bước lệnh, ma trận hệ điều hành, kiểm tra dependency hay check `validate` ở repo bài nộp.
 3. **An toàn dependency:** `npm.cmd ci` phát hiện 2 vulnerabilities (1 moderate, 1 high). Chưa có kết luận mức độ ảnh hưởng thực tế; cần phân tích qua `npm.cmd audit`, không tự chạy `npm audit fix --force`.
 4. **Cấu hình OAuth/Admin:** Bộ test chạy khi các biến `GOOGLE_CLIENT_ID` và `ADMIN_SECRET` chưa cấu hình; không coi đây là kiểm thử đầy đủ cho đăng nhập Google hoặc luồng Admin thật.
 5. **Kiểm thử thao tác tay và tính tiếp cận:** Cần demo end-to-end trên trình duyệt: từ bài học cũ → hai bước → server chấm → lưu DB → refresh giữ điểm; đồng thời thử bàn phím, thông báo lỗi và không lộ đáp án trước submit.
@@ -158,6 +160,6 @@ Nguồn kiểm chứng thêm khi có thể truy cập GitHub: [Actions của for
 
 ### 6.3. Kết luận
 
-**Tại ngày 15/11/2026, nhóm 29 có bằng chứng chắc chắn cho kết quả `LOCAL TEST: 31 PASS / 0 FAIL` trên Node.js 22.23.4.** Đây là tiến bộ thực tế phục vụ Checkpoint 2. Báo cáo **không khẳng định CI xanh, đã test thủ công đầy đủ, hay hoàn thành mọi tiêu chí B-01–B-12** khi chưa có bằng chứng.
+**Đến ngày 17/11/2026, nhóm 29 đã cung cấp bằng chứng `LOCAL TEST: 31 PASS / 0 FAIL` trên Node.js 22.23.4 (lượt chạy 15/11) và ảnh `GITHUB ACTIONS: 6 RUNS XANH` trên `track-b-main` (mới nhất 16/11).** Đây là những kết quả thực tế phục vụ PC-2. Báo cáo **không khẳng định đã xem log của từng run, đã test thủ công đầy đủ, không còn lỗ hổng bảo mật, hay hoàn thành mọi tiêu chí B-01–B-12** khi chưa có bằng chứng.
 
-**Tài liệu căn cứ:** `REQUIREMENTS.md`, `DECISIONS.md`, `TEST_PLAN.md` của nhóm; ảnh chạy test local được cung cấp ngày 15/11/2026; đề thi chính thức Hack Marathon 2026 (§6, §8.3); trang Progress Check v1.0.6. Nhận xét Checkpoint 1 để theo dõi tại [PR #1 của Track B](https://github.com/fossbk-spec/ktpmud-bkt-vuontoan-starter/pull/1). Các URL GitHub không truy xuất được đầy đủ trong lượt lập báo cáo này, nên không dùng chúng để tự xác nhận trạng thái CI/commit/thành viên.
+**Tài liệu căn cứ:** `REQUIREMENTS.md`, `DECISIONS.md`, `TEST_PLAN.md` của nhóm; ảnh chạy test local được cung cấp ngày 15/11/2026; đề thi chính thức Hack Marathon 2026 (§6, §8.3); trang Progress Check v1.0.6. Nhận xét Checkpoint 1 để theo dõi tại [PR #1 của Track B](https://github.com/fossbk-spec/ktpmud-bkt-vuontoan-starter/pull/1). Bằng chứng CI được xác nhận từ ảnh Actions do nhóm cung cấp ngày 17/11; chưa đối chiếu được log chi tiết từng run. Vai trò thành viên không suy ra từ tác giả commit nếu chưa xác minh ánh xạ với MSSV.
